@@ -12,13 +12,17 @@ Developer Experience first.
 You communicate with Drift Detection Server via API, both for fitting
 and predicting the drift. In your training pipeline, use the `fit/` endpoint:
 
+```
 TODO
+```
 
 where _labels_ are the `y` targets.
 
 Then, next to your prediction call:
 
+```
 TODO
+```
 
 where `_y` are the predicted targets.
 
@@ -33,11 +37,15 @@ Note that this makes the usage of the server **as easy as possible**.
 
 To install dependencies, use poetry:
 
-`poetry install`
+```
+poetry install
+```
 
 And run server locally:
 
-`python drift_detection_server/app.py`
+```
+python drift_detection_server/app.py
+```
 
 ## Production usage
 
@@ -49,14 +57,18 @@ build and deploy the Docker image, or use the pre-built version from _TODO_.
 To deploy the on cloud instance using docker, you can easily pull the image
 and run it:
 
+```python
 TODO
+```
 
 ### Kubernetes and Helm
 
 For more demanding use-cases, it's facilitated to deploy Drift Detection Server
 on kubernetes. DDS is packaged with bitnami. You can include the chart by
 
+```python
 TODO
+```
 
 ## Real-world scenarios
 
