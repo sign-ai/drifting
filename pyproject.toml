@@ -1,0 +1,50 @@
+[tool.poetry]
+name = "drift-detection-server"
+version = "0.0.0"
+description = "The most flexible Drift Detection framework"
+
+authors = ["Dawid Smoleń <smolendawid@gmail.com>"]
+
+maintainers = ["Dawid Smoleń <smolendawid@gmail.com>"]
+
+license = "MIT"
+
+readme = "README.md"
+
+homepage = "https://python-poetry.org/"
+repository = "https://github.com/smolendawid/drift-detector-backend"
+documentation = ""
+
+keywords = ["python", "backend", "drift-detector"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+
+[tool.poetry.dev-dependencies]
+black = "^22.6.0"
+mypy = "^0.971"
+pylint = "^2.14.5"
+bandit = "^1.7.4"
+pycodestyle = "^2.9.1"
+pep8 = "^1.7.1"
+autopep8 = "^1.6.0"
+pydocstyle = "^6.1.1"
+pytest = "^7.1.2"
+python-semantic-release = "^7.31.2"
+commitizen = "^2.31.0"
+
+[tool.poetry.extras]
+
+[tool.semantic_release]
+version_variable = [
+    "drift_detector/version.py:__version__",
+    "pyproject.toml:version"
+]
+branch = "main"
+upload_to_pypi = false
+upload_to_release = true
+build_command = "poetry build"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
