@@ -1,8 +1,8 @@
 site_name: Drift Detection Server
 site_description: The documentation of Drift Detection Server
-site_url:
-repo_url:
-edit_uri: edit/main/docs
+site_url: https://smolendawid.github.io/drift-detection-server/
+repo_url: https://github.com/smolendawid/drift-detection-server
+edit_uri:
 copyright: Dawid Smoleń
 plugins:
   - mkdocstrings
