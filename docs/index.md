@@ -1,1 +1,4 @@
-# Index
+---
+template: home.html
+title: Home
+---
