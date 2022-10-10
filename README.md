@@ -1,4 +1,4 @@
-# Drift Detection Server
+# Drifting
 
 The most flexible Drift Detection framework.
 
@@ -7,31 +7,36 @@ Learn about the concepts in
 
 ## Quickstart
 
-Developer Experience first.
+Drifting is built with Developer Experience in mind.
 
-You communicate with Drift Detection Server via API, both for fitting
-and predicting the drift. In your training pipeline, use the `fit/` endpoint:
+You communicate with Drift Detection Server via `DriftingClient` or API,
+both for fitting the Drift Detector and detecting the drift. In your training
+pipeline, use the `fit/` endpoint:
+
+```python
+import drifting
+drifting.fit(labels)
 
 ```
-TODO
-```
 
-where _labels_ are the `y` targets.
+where `labels` are the _y_ targets.
 
 Then, next to your prediction call:
 
-```
-TODO
+```python
+import drifting
+response = drifting.predict(prediction)
+response.is_drift
 ```
 
-where `_y` are the predicted targets.
+where `prediction` is the predicted target for the example.
 
 Note that this makes the usage of the server **as easy as possible**.
 
 1. It's not required to manage any artifacts,
 1. No need to implement any feedback loops,
 1. No need to leave your python environment, fetch any logs,
-1. You only call API twice.
+1. You only request server.
 
 ## Local installation and running
 

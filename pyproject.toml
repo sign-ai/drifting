@@ -1,9 +1,9 @@
 [tool.poetry]
-name = "drift-detection-server"
+name = "drifting"
 version = "0.0.0"
 description = "The most flexible Drift Detection framework"
 
-authors = ["Dawid Smoleń <smolendawid@gmail.com>"]
+authors = ["Sign-AI <smolendawid@gmail.com>"]
 
 maintainers = ["Dawid Smoleń <smolendawid@gmail.com>"]
 
@@ -12,7 +12,7 @@ license = "MIT"
 readme = "README.md"
 
 homepage = "https://python-poetry.org/"
-repository = "https://github.com/smolendawid/drift-detector-backend"
+repository = "https://github.com/sign-ai/drifting"
 documentation = ""
 
 keywords = ["python", "backend", "drift-detector"]

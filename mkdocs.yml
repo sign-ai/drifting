@@ -96,8 +96,7 @@ extra_css:
 nav:
   - Home: index.md
   - Get started:
-      - Local installation: get_started/local_installation.md
-      - Server setup using docker: get_started/server_setup_using_docker.md
+      - Quickstart: get_started/quickstart.md
   - Concepts:
       - Basic Definitions: concepts/basic_objects.md
       - Parallel Training and Prediction: concepts/parallel_training_and_prediction.md

@@ -36,7 +36,7 @@ in the feature space. That means it is possible to share calculations between
 model inference graphs and drift detection graphs and make drift detection
 lighter. API-first approach works well with this optimization.
 
-##
+## Comparison to other packages
 
 For many cases the solution we advice is Seldon Alibi Detect Server. Seldon
 Core is great technology that covers with the best principles MLOps in mind.
