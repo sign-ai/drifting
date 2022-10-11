@@ -1,9 +1,9 @@
-site_name: Drift Detection Server
-site_description: The documentation of Drift Detection Server
-site_url: https://smolendawid.github.io/drift-detection-server/
-repo_url: https://github.com/smolendawid/drift-detection-server
+site_name: Drifting
+site_description: The documentation of drifting package
+site_url: https://sign-ai.github.io/drifting/
+repo_url: https://github.com/sign-ai/drifting
 edit_uri: "" #disables edit button
-copyright: Dawid Smoleń
+copyright: Sign-AI
 plugins:
   - mkdocstrings
   - search
@@ -97,11 +97,16 @@ nav:
   - Home: index.md
   - Get started:
       - Quickstart: get_started/quickstart.md
+      - Workflow: get_started/workflow.md
   - Concepts:
       - Basic Definitions: concepts/basic_objects.md
+      - Online Drift Detection: concepts/online_drift_detection.md
       - Parallel Training and Prediction: concepts/parallel_training_and_prediction.md
       - Flexibility: concepts/flexibility.md
       - Other assumptions: concepts/other_assumptions.md
+  - Server Architecture: server_architecture.md
   - Usage Scenarios: usage_scenarios.md
   - Examples:
-      - Local usage: examples/local_usage.md
+      - Images data: examples/images.md
+      - Tabular data: examples/tabular_data.md
+      - All kinds of drift: examples/all_kinds_of_drifts.md

@@ -3,40 +3,44 @@
 The most flexible Drift Detection framework.
 
 Learn about the concepts in
-[Docs](https://smolendawid.github.io/drift-detection-server/)
+[Docs](https://sign-ai.github.io/drifting/)
+
+Main features:
+
+:+1: surprisingly easy to use
+:+1: production-ready
+:+1: created with real use-cases in mind
+:+1: Python-first, API-first
 
 ## Quickstart
 
-Drifting is built with Developer Experience in mind.
+`drifting` is built with Developer Experience in mind.
 
 You communicate with Drift Detection Server via `DriftingClient` or API,
 both for fitting the Drift Detector and detecting the drift. In your training
-pipeline, use the `fit/` endpoint:
+pipeline, use the `fit` method:
 
 ```python
 import drifting
-drifting.fit(labels)
+drifting.fit(train_column, project="example")
 
 ```
-
-where `labels` are the _y_ targets.
 
 Then, next to your prediction call:
 
 ```python
 import drifting
-response = drifting.predict(prediction)
+response = drifting.detect(inference_data, project="example")
 response.is_drift
 ```
-
-where `prediction` is the predicted target for the example.
 
 Note that this makes the usage of the server **as easy as possible**.
 
 1. It's not required to manage any artifacts,
 1. No need to implement any feedback loops,
+1. No need to collect test data,
 1. No need to leave your python environment, fetch any logs,
-1. You only request server.
+1. You only make request to the server twice.
 
 ## Local installation and running
 
@@ -49,7 +53,7 @@ poetry install
 And run server locally:
 
 ```
-python drift_detection_server/app.py
+python drifting/app.py
 ```
 
 ## Production usage
@@ -81,5 +85,5 @@ Even though Drift Detection Server makes the task incredibly easy,
 it still follows the MLOps culture, assuring reproducibility,
 observability and scalability postulates are fulfilled.
 
-Please read the [Docs](https://smolendawid.github.io/drift-detection-server/)
+Please read the [Docs](https://sign-ai.github.io/drifting/)
 to learn about real-world usage.
