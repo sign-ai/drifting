@@ -98,12 +98,14 @@ nav:
   - Get started:
       - Quickstart: get_started/quickstart.md
       - Workflow: get_started/workflow.md
+      - All kinds of drift: get_started/all_kinds_of_drift.md
   - Concepts:
       - Basic Definitions: concepts/basic_objects.md
       - Online Drift Detection: concepts/online_drift_detection.md
       - Parallel Training and Prediction: concepts/parallel_training_and_prediction.md
       - Flexibility: concepts/flexibility.md
       - Other assumptions: concepts/other_assumptions.md
+      - Technology selection: concepts/technology_selection.md
   - Server Architecture: server_architecture.md
   - Usage Scenarios: usage_scenarios.md
   - Examples:
