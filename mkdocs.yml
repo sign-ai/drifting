@@ -111,4 +111,4 @@ nav:
   - Examples:
       - Images data: examples/images.md
       - Tabular data: examples/tabular_data.md
-      - All kinds of drift: examples/all_kinds_of_drifts.md
+      - All kinds of drift: examples/all_kinds_of_drift.md

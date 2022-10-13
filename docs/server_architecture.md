@@ -89,7 +89,7 @@ users will decide there's a need for Cloud Native deployment, it's easy to
 copy the `artifact_path` to external storage service, like S3 or Google Cloud
 Storage.
 
-## Cloud Native deployment
+## 2: Cloud Native deployment
 
 Another way of deployment is to deploy artifacts storage, database, and
 Drift Detection Server separately.

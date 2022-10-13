@@ -1,5 +1,11 @@
 # Technology selection
 
-## Selected dependencies
+## FastAPI
 
-## Comparison to other packages
+## Alibi Detect
+
+# Comparison to other packages
+
+## Alibi-detect-server from seldon-core
+
+## Evidently
