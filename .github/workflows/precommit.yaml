@@ -16,10 +16,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        # Mobile folder working directory.
-        working-directory: drifting
     strategy:
       matrix:
         # Run in all these versions of Python
