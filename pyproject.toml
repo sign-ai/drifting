@@ -40,7 +40,7 @@ commitizen = "^2.31.0"
 
 [tool.semantic_release]
 version_variable = [
-    "drift_detector/version.py:__version__",
+    "drifting/version.py:__version__",
     "pyproject.toml:version"
 ]
 branch = "main"
