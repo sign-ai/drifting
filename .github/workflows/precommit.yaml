@@ -45,6 +45,12 @@ jobs:
         with:
           path: .venv
           key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
+      - name: Run tests with pytest
+        run: |
+          ls
+      - name: Run tests with pytest
+        run: |
+          cat Makefile
       - name: Install dependencies
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: make install
