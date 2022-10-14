@@ -19,6 +19,9 @@ keywords = ["python", "backend", "drift-detector"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
+fastapi = "^0.85.0"
+uvicorn = "^0.18.3"
+prometheus-fastapi-instrumentator = "^5.9.1"
 
 [tool.poetry.dev-dependencies]
 black = "^22.6.0"
@@ -37,7 +40,7 @@ commitizen = "^2.31.0"
 
 [tool.semantic_release]
 version_variable = [
-    "drift_detector/version.py:__version__",
+    "drifting/version.py:__version__",
     "pyproject.toml:version"
 ]
 branch = "main"

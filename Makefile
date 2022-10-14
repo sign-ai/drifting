@@ -2,7 +2,8 @@
 
 CMD = poetry run python
 
-PACKAGE_DIR = drift_detector
+PACKAGE_DIR = drifting
+TEST_DIR = tests
 
 .PHONY = help setup test run clean
 
@@ -22,18 +23,15 @@ install:
 	poetry install
 
 test:
-	${CMD} -m pytest ${PACKAGE_DIR}/tests/
+	${CMD} -m pytest tests/
 
 check-all:
-	make check-format
-	${CMD} -m pylint ${PACKAGE_DIR}
-	${CMD} -m mypy --ignore-missing-imports ${PACKAGE_DIR}
+	${CMD} -m black --check ${PACKAGE_DIR} ${TEST_DIR}
+	${CMD} -m pylint ${PACKAGE_DIR} ${TEST_DIR}
+	${CMD} -m mypy --ignore-missing-imports ${PACKAGE_DIR} ${TEST_DIR}
 	
-check-format:
-	${CMD} -m black --check ${PACKAGE_DIR}
-
 format:
-	${CMD} -m black ${PACKAGE_DIR}
+	${CMD} -m black ${PACKAGE_DIR} ${TEST_DIR}
 
 build:
 	rm -rf dist
