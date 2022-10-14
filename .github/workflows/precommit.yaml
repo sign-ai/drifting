@@ -44,9 +44,12 @@ jobs:
       - name: Install dependencies
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: make install
-      - name: Run tests with pytest
+      - name: Run checks
         run: |
           make check-all
+      - name: Run tests with pytest
+        run: |
+          make test
       # - name: Build the package
       #   run: |
       #     make build
