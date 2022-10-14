@@ -34,7 +34,7 @@ jobs:
       - name: Display Python version
         run: python -c "import sys; print(sys.version)"
       - name: Install poetry
-        uses: snok/install-poetry@v1.0.0
+        uses: snok/install-poetry@v1.1.14
         with:
           virtualenvs-create: true
           virtualenvs-in-project: true
@@ -44,6 +44,12 @@ jobs:
         with:
           path: .venv
           key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
+      - name: Install dependencies
+        run: |
+          cat Makefile
+      - name: Install dependencies
+        run: |
+          ls
       - name: Install dependencies
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: make install
