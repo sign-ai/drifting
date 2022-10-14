@@ -1,5 +1,9 @@
 # Drifting
 
+[![CI/CD](https://github.com/smolendawid/cacha/actions/workflows/cicd.yaml/badge.svg)](https://github.com/sign-ai/drifting/actions/workflows/precommit.yaml)
+[![PyPi](https://img.shields.io/pypi/v/cacha?label=PyPI&logo=pypi)](https://pypi.org/project/cacha/)
+[![License](https://img.shields.io/pypi/l/cacha.svg)](https://github.com/sign-ai/drifting/blob/main/LICENSE)
+
 The most flexible Drift Detection framework.
 
 Learn about the concepts in
@@ -8,8 +12,13 @@ Learn about the concepts in
 Main features:
 
 :+1: surprisingly easy to use
-:+1: production-ready
+
 :+1: created with real use-cases in mind
+
+:+1: not just a math library
+
+:+1: production-ready server
+
 :+1: Python-first, API-first
 
 ## Quickstart

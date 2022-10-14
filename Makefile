@@ -25,13 +25,10 @@ test:
 	${CMD} -m pytest ${PACKAGE_DIR}/tests/
 
 check-all:
-	make check-format
+	${CMD} -m black --check ${PACKAGE_DIR}
 	${CMD} -m pylint ${PACKAGE_DIR}
 	${CMD} -m mypy --ignore-missing-imports ${PACKAGE_DIR}
 	
-check-format:
-	${CMD} -m black --check ${PACKAGE_DIR}
-
 format:
 	${CMD} -m black ${PACKAGE_DIR}
 

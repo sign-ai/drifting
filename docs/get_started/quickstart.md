@@ -2,7 +2,7 @@
 
 ## Running the server
 
-Drift-detection-server can be easily installed using pip:
+drifting can be easily installed using pip:
 
 ```
 pip install drifting

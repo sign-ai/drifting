@@ -1,15 +1,17 @@
-name: Drift Detector Code Checks
+name: Drifting Code Checks
 on:
   push:
     branches:
       - main
     paths:
-      - drift-detection-server/**
+      - drifting/**
+      - tests/**
   pull_request:
     branches:
       - main
     paths:
-      - drift-detection-server/**
+      - drifting/**
+      - tests/**
 
 jobs:
   test:
@@ -17,7 +19,7 @@ jobs:
     defaults:
       run:
         # Mobile folder working directory.
-        working-directory: drift-detection-server
+        working-directory: drifting
     strategy:
       matrix:
         # Run in all these versions of Python
