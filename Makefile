@@ -1,6 +1,6 @@
 .ONESHELL:
 
-CMD = poetry run python
+CMD = python
 
 PACKAGE_DIR = drifting
 TEST_DIR = tests
