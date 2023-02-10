@@ -1,6 +1,9 @@
 """Useful utils."""
 
+import os
 import uuid
+
+PACKAGE_ROOT = os.path.join(os.path.dirname(__file__))
 
 
 def generate_project_id() -> str:
