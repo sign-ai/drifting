@@ -35,12 +35,8 @@ class LabelDriftDetector(MLModel):
 
         return self.ready
 
-    async def predict(
-        self, payload: types.InferenceRequest
-    ) -> types.InferenceResponse:
-        input_data = self.decode_request(
-            payload, default_codec=NumpyRequestCodec
-        )
+    async def predict(self, payload: types.InferenceRequest) -> types.InferenceResponse:
+        input_data = self.decode_request(payload, default_codec=NumpyRequestCodec)
         try:
             self._model.update(input_data)
         except (ValueError, IndexError) as err:
@@ -107,11 +103,7 @@ class LabelDriftDetectorCore:
     def encode(self, drift_detected, estimation):
         outputs = []
         outputs.append(
-            NumpyCodec.encode_output(
-                name="drift", payload=np.array([drift_detected])
-            )
+            NumpyCodec.encode_output(name="drift", payload=np.array([drift_detected]))
         )
-        outputs.append(
-            NumpyCodec.encode_output(name="stat_val", payload=np.array([]))
-        )
+        outputs.append(NumpyCodec.encode_output(name="stat_val", payload=np.array([])))
         return outputs
