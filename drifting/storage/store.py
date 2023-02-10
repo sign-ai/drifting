@@ -1,24 +1,21 @@
 """Artifacts Storage for DDS."""
 
-from typing import Callable, List
+import abc
+from typing import List
 
 
-class DriftDetectionServerStore:
+class DriftDetectionServerStore(abc.ABC):
     """Manage the information about the existing and active models.
 
     DriftDetectionServerStore is operating on two json files with key-value
     pairs.
     """
 
-    def __init__(self, init_storage_func: Callable):
-        """Initialize store with the info about available Drift Detectors."""
-        self.active_db, self.store_db = init_storage_func()
-
-    def add_drift_detector(self):
+    def add_drift_detector(self, project_id: str):
         """Add Drift Detector."""
         pass
 
-    def remove_drift_detector(self):
+    def remove_drift_detector(self, project_id: str):
         """Remove Drift Detector."""
         pass
 
