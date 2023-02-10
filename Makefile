@@ -17,10 +17,10 @@ install-poetry:
 	pip install poetry==1.1.14
 	
 install-prod:
-	poetry install --no-dev
+	poetry install
 
 install:
-	poetry install
+	poetry install --with dev,test
 
 test:
 	${CMD} -m pytest tests/
