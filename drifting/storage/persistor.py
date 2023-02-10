@@ -26,14 +26,18 @@ def create_detector_package(
     source_path = os.path.join(
         PACKAGE_ROOT, "drift_detection_server", implementation_file
     )
-    destination_path = os.path.join(tmp_dirname, implementation_file.split("/")[-1])
+    destination_path = os.path.join(
+        tmp_dirname, implementation_file.split("/")[-1]
+    )
     shutil.copyfile(source_path, destination_path)
 
     # Add model-settings.json
     with open(os.path.join(tmp_dirname, "model-settings.json"), "w") as f:
         # todo convert / to . should be done wisely
         with open(
-            os.path.join(PACKAGE_ROOT, "storage", "model-settings-example.json")
+            os.path.join(
+                PACKAGE_ROOT, "storage", "model-settings-example.json"
+            )
         ) as template_file:
             content = template_file.read()
 
@@ -65,4 +69,6 @@ def persist(
 
         """Move package_path"""
         if destination_uri.is_dir():
-            shutil.copytree(tmp_dirname, os.path.join(destination_uri, detector_name))
+            shutil.copytree(
+                tmp_dirname, os.path.join(destination_uri, detector_name)
+            )
