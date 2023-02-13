@@ -54,6 +54,11 @@ class DriftDetectionServer(MLModel):
             from drifting.drift_detection_server.label import LabelDriftDetectorCore
 
             trainer = LabelDriftDetectorCore()
+        elif data_type == "dummy":
+            from drifting.drift_detection_server.dummy import DummyDriftDetectorCore
+
+            trainer = DummyDriftDetectorCore()
+
         else:
             raise HTTPException(
                 status_code=404,
@@ -76,7 +81,7 @@ class DriftDetectionServer(MLModel):
         After fitting, algorithm is not automatically loaded.
         """
         if os.path.exists(os.path.join(self.settings.parameters.uri, detector_name)):
-            raise ModelNameExists(f"Model with name {detector_name} already exists.")
+            raise ModelNameExists(f"Model with name '{detector_name}' already exists.")
 
         trainer = self._provide_trainer(data_type)
 
