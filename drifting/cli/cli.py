@@ -13,7 +13,6 @@ from drifting.cli.clli_utils import (
     overwrite_mlserver_settings,
 )
 from drifting.drifting_logging import configure_logger
-from drifting.storage.storage_local import DEFAULT_ARTIFACT_PATH, LocalStorage
 
 DEFAULT_BACKEND_STORE_URI = "./drifting_store"
 
