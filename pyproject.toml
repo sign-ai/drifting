@@ -1,29 +1,30 @@
 [tool.poetry]
 name = "drifting"
 version = "0.0.0"
-description = "The most flexible Drift Detection framework"
+description = ""
+authors = ["Dawid Smoleń"]
 
-authors = ["Sign-AI <smolendawid@gmail.com>"]
+[tool.poetry.group.dev]
+optional = true
 
-maintainers = ["Dawid Smoleń <smolendawid@gmail.com>"]
+[tool.poetry.group.test]
+optional = true
 
-license = "MIT"
+[tool.poetry.group.docs]
+optional = true
 
-readme = "README.md"
-
-homepage = "https://python-poetry.org/"
-repository = "https://github.com/sign-ai/drifting"
-documentation = ""
-
-keywords = ["python", "backend", "drift-detector"]
+[tool.poetry.group.docs.dependencies]
 
 [tool.poetry.dependencies]
-python = "^3.9"
-fastapi = "^0.85.0"
-uvicorn = "^0.18.3"
-prometheus-fastapi-instrumentator = "^5.9.1"
+python = ">3.8"
+river = "^0.15.0"
+mlserver = "^1.2.3"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.test.dependencies]
+pytest = "^7.1.2"
+pytest-asyncio = "^0.20.3"
+
+[tool.poetry.group.dev.dependencies]
 black = "^22.6.0"
 mypy = "^0.971"
 pylint = "^2.14.5"
@@ -32,21 +33,7 @@ pycodestyle = "^2.9.1"
 pep8 = "^1.7.1"
 autopep8 = "^1.6.0"
 pydocstyle = "^6.1.1"
-pytest = "^7.1.2"
 python-semantic-release = "^7.31.2"
-commitizen = "^2.31.0"
-
-[tool.poetry.extras]
-
-[tool.semantic_release]
-version_variable = [
-    "drifting/version.py:__version__",
-    "pyproject.toml:version"
-]
-branch = "main"
-upload_to_pypi = false
-upload_to_release = true
-build_command = "poetry build"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

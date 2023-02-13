@@ -1,0 +1,8 @@
+
+{
+    "name": "DriftDetectionServer",
+    "implementation": "drifting.drift_detection_server.server.DriftDetectionServer",
+    "parameters": {
+        "uri": ""
+    }
+}

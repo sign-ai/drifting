@@ -1,6 +1,6 @@
 .ONESHELL:
 
-CMD = poetry run python
+CMD = python
 
 PACKAGE_DIR = drifting
 TEST_DIR = tests
@@ -17,10 +17,11 @@ install-poetry:
 	pip install poetry==1.1.14
 	
 install-prod:
-	poetry install --no-dev
+	poetry install
 
 install:
-	poetry install
+	# poetry install --with dev,test
+	pip install -r requirements.txt
 
 test:
 	${CMD} -m pytest tests/
