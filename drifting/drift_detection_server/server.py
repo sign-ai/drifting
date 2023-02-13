@@ -1,4 +1,6 @@
-from fastapi import HTTPException
+"""Drift Detection Server."""
+
+from fastapi import HTTPException  # pylint: disable=no-name-in-module
 from mlserver import MLModel
 from mlserver.handlers.custom import custom_handler
 from mlserver.types import InferenceRequest
@@ -6,47 +8,54 @@ from mlserver.types import InferenceRequest
 from drifting.storage.persistor import persist
 
 
-fit_rest_path = "/v2/models/fit/"
+FIT_REST_PATH = "/v2/models/fit/"
 
 ALLOWED_ALGORITHMS = ["MMDDriftOnline"]
 
 
 class DriftDetectionServer(MLModel):
+    """Drift Detection Server - main drifting package entrypoint.
+
+    Drift Detection Serveris in fact a separate `MLModel` with additional
+    fit method that allows to fit the new detectors.
+    """
+
     async def load(self) -> bool:
+        """See base class."""
         self.ready = True
-        self.destination_uri = self.settings.parameters.uri
         return self.ready
 
-    async def predict(self) -> float:
+    async def predict(self, payload: InferenceRequest) -> float:
         raise ValueError(
-            f"DriftDetectionServer is used only for adding the new models and versions using {fit_rest_path} endpoint"
+            "DriftDetectionServer is used only for adding the new models and "
+            f"versions using {FIT_REST_PATH} endpoint"
         )
 
     def _provide_trainer(self, data_type: str):
-        """"""
+        """Provide drift detection object."""
+        # pylint: disable=import-outside-toplevel
 
         if data_type == "sequential":
             pass
         elif data_type == "image":
             pass
         elif data_type == "tabular":
-            from drifting.drift_detection_server.tabular import TabularDetector
-
-            trainer = TabularDetector()
+            pass
         elif data_type == "label":
             from drifting.drift_detection_server.label import (
-                LabelDriftDetectorTrainer,
+                LabelDriftDetectorCore,
             )
 
-            trainer = LabelDriftDetectorTrainer()
+            trainer = LabelDriftDetectorCore()
         else:
             raise HTTPException(
                 status_code=404,
-                detail=f'data_type has to be one of ["MMDDriftOnline", ]',
+                detail="data_type has to be one of "
+                '["sequential", "image", "tabular", "label"]',
             )
         return trainer
 
-    @custom_handler(rest_path=fit_rest_path)
+    @custom_handler(rest_path=FIT_REST_PATH)
     async def fit(
         self,
         payload: InferenceRequest,
@@ -65,7 +74,7 @@ class DriftDetectionServer(MLModel):
         detector = trainer.fit(data)
 
         persist(
-            destination_uri=self.destination_uri,
+            destination_uri=self.settings.parameters.uri,
             implementation_path=trainer.implementation_path,
             detector=detector,
             saving_function=trainer.save,

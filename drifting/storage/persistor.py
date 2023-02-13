@@ -1,3 +1,4 @@
+"""Tools for creating the detector package."""
 import os
 import shutil
 from pathlib import Path
@@ -20,29 +21,33 @@ def create_detector_package(
     # create "model-settings.json" in the new model location
     #
     # Copy implementation to the new detector package
-    implementation_file = (
-        ".".join(implementation_path.split(".")[:-1]).replace(".", "/") + ".py"
-    )
+    implementation_file = "/".join(implementation_path.split(".")[:-1]) + ".py"
     source_path = os.path.join(
         PACKAGE_ROOT, "drift_detection_server", implementation_file
     )
-    destination_path = os.path.join(tmp_dirname, implementation_file.split("/")[-1])
+    destination_path = os.path.join(
+        tmp_dirname, implementation_file.rsplit("/", maxsplit=1)[-1]
+    )
     shutil.copyfile(source_path, destination_path)
 
     # Add model-settings.json
-    with open(os.path.join(tmp_dirname, "model-settings.json"), "w") as f:
-        # todo convert / to . should be done wisely
+    with open(
+        os.path.join(tmp_dirname, "model-settings.json"), "w", encoding="utf-8"
+    ) as setting_file:
         with open(
-            os.path.join(PACKAGE_ROOT, "storage", "model-settings-example.json")
+            os.path.join(PACKAGE_ROOT, "storage", "model-settings-example.json"),
+            encoding="utf-8",
         ) as template_file:
             content = template_file.read()
 
         content = content.replace("__IMPLEMENTATION__", implementation_path)
         content = content.replace("__NAME__", detector_name)
-        f.write(content)
+        setting_file.write(content)
 
     # Save the detector parameters
     saving_function(detector, os.path.join(tmp_dirname))
+
+    return tmp_dirname
 
 
 def persist(
@@ -52,6 +57,7 @@ def persist(
     saving_function,
     detector_name,
 ):
+    """Construct detector package and move it to desired location."""
     destination_uri = Path(destination_uri)
 
     with tempfile.TemporaryDirectory() as tmp_dirname:
@@ -63,6 +69,6 @@ def persist(
             detector_name=detector_name,
         )
 
-        """Move package_path"""
+        # Move package path to target location
         if destination_uri.is_dir():
             shutil.copytree(tmp_dirname, os.path.join(destination_uri, detector_name))

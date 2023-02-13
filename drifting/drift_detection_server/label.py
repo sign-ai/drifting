@@ -12,15 +12,22 @@ from mlserver import MLModel, types
 from mlserver.codecs import NumpyCodec, NumpyRequestCodec
 from mlserver.errors import InferenceError, MLServerError
 from mlserver.types import InferenceRequest
+
+# pylint: disable=no-name-in-module
 from pydantic.error_wrappers import ValidationError
+
+from drifting.drift_detection_server.detector_core import DetectorCore
 
 
 class LabelDriftDetector(MLModel):
+    """Class used during inference."""
+
     async def load(self) -> bool:
+        # pylint: disable=attribute-defined-outside-init
         self.uri = self.settings.parameters.uri
         try:
-            with open(os.path.join(self.uri, "label_detector.pkl"), "rb") as f:
-                self._model: river.drift.ADWIN = pickle.load(f)
+            with open(os.path.join(self.uri, "label_detector.pkl"), "rb") as file:
+                self._model: river.drift.ADWIN = pickle.load(file)
             self.ready = True
         except (
             ValueError,
@@ -64,23 +71,27 @@ class LabelDriftDetector(MLModel):
         )
 
 
-class LabelDriftDetectorCore:
+class LabelDriftDetectorCore(DetectorCore):
     """See base class."""
 
-    implementation_path = "label.LabelDriftDetector"
+    def __init__(self):
+        """See base class."""
+        self._model: river.drift.ADWIN = None
+        self.implementation_path = "label.LabelDriftDetector"
 
     def load(self, uri) -> bool:
+        """See base class."""
         with open(
             os.path.join(uri, "label_detector.pkl"),
             "rb",
-        ) as f:
-            self._model: river.drift.ADWIN = pickle.load(f)
+        ) as file:
+            self._model = pickle.load(file)
         return self._model
 
-    def save(self, detector, path):
+    def save(self, detector, uri):
         """See base class."""
-        with open(os.path.join(path, "label_detector.pkl"), "wb") as f:
-            pickle.dump(detector, f)
+        with open(os.path.join(uri, "label_detector.pkl"), "wb") as file:
+            pickle.dump(detector, file)
 
     def predict(self, input_data):
         self._model.update(input_data)
@@ -101,9 +112,12 @@ class LabelDriftDetectorCore:
         return NumpyRequestCodec.decode_request(payload)
 
     def encode(self, drift_detected, estimation):
+        """See base class."""
         outputs = []
         outputs.append(
             NumpyCodec.encode_output(name="drift", payload=np.array([drift_detected]))
         )
-        outputs.append(NumpyCodec.encode_output(name="stat_val", payload=np.array([])))
+        outputs.append(
+            NumpyCodec.encode_output(name="stat_val", payload=np.array([estimation]))
+        )
         return outputs
