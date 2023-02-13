@@ -4,7 +4,7 @@ import pytest
 
 @pytest.mark.asyncio
 async def test_model_name_exists_error():
-    """Test NodelNameExists error."""
+    """Test ModelNameExists error."""
     assert True
 
 
