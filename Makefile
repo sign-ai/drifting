@@ -20,7 +20,8 @@ install-prod:
 	poetry install
 
 install:
-	poetry install --with dev,test
+	# poetry install --with dev,test
+	pip install -r requirements.txt
 
 test:
 	${CMD} -m pytest tests/
