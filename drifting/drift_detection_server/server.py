@@ -7,6 +7,7 @@ from mlserver import MLModel
 from mlserver.handlers.custom import custom_handler
 from mlserver.types import InferenceRequest
 
+from drifting.drift_detection_server.detector_core import DetectorCore
 from drifting.storage.persistor import persist
 
 FIT_REST_PATH = "/v2/models/fit/"
@@ -40,7 +41,7 @@ class DriftDetectionServer(MLModel):
             f"versions using {FIT_REST_PATH} endpoint"
         )
 
-    def _provide_trainer(self, data_type: str):
+    def _provide_trainer(self, data_type: str) -> DetectorCore:
         """Provide drift detection object."""
         # pylint: disable=import-outside-toplevel
 
@@ -53,7 +54,7 @@ class DriftDetectionServer(MLModel):
         elif data_type == "label":
             from drifting.drift_detection_server.label import LabelDriftDetectorCore
 
-            trainer = LabelDriftDetectorCore()
+            trainer: DetectorCore = LabelDriftDetectorCore()
         elif data_type == "dummy":
             from drifting.drift_detection_server.dummy import DummyDriftDetectorCore
 
