@@ -1,16 +1,26 @@
 """Drift Detection Server."""
 
-from fastapi import HTTPException  # pylint: disable=no-name-in-module
+import os
+
+from fastapi import HTTPException, status  # pylint: disable=no-name-in-module
 from mlserver import MLModel
 from mlserver.handlers.custom import custom_handler
 from mlserver.types import InferenceRequest
 
+from drifting.drift_detection_server.detector_core import DetectorCore
 from drifting.storage.persistor import persist
-
 
 FIT_REST_PATH = "/v2/models/fit/"
 
 ALLOWED_ALGORITHMS = ["MMDDriftOnline"]
+
+
+class ModelNameExists(Exception):
+    """Raise when trying to train a model that already exists."""
+
+    def __init__(self, msg: str, status_code: int = status.HTTP_400_BAD_REQUEST):
+        super().__init__(msg)
+        self.status_code = status_code
 
 
 class DriftDetectionServer(MLModel):
@@ -31,7 +41,7 @@ class DriftDetectionServer(MLModel):
             f"versions using {FIT_REST_PATH} endpoint"
         )
 
-    def _provide_trainer(self, data_type: str):
+    def _provide_trainer(self, data_type: str) -> DetectorCore:
         """Provide drift detection object."""
         # pylint: disable=import-outside-toplevel
 
@@ -42,11 +52,14 @@ class DriftDetectionServer(MLModel):
         elif data_type == "tabular":
             pass
         elif data_type == "label":
-            from drifting.drift_detection_server.label import (
-                LabelDriftDetectorCore,
-            )
+            from drifting.drift_detection_server.label import LabelDriftDetectorCore
 
-            trainer = LabelDriftDetectorCore()
+            trainer: DetectorCore = LabelDriftDetectorCore()
+        elif data_type == "dummy":
+            from drifting.drift_detection_server.dummy import DummyDriftDetectorCore
+
+            trainer = DummyDriftDetectorCore()
+
         else:
             raise HTTPException(
                 status_code=404,
@@ -68,6 +81,9 @@ class DriftDetectionServer(MLModel):
         persisted.
         After fitting, algorithm is not automatically loaded.
         """
+        if os.path.exists(os.path.join(self.settings.parameters.uri, detector_name)):
+            raise ModelNameExists(f"Model with name '{detector_name}' already exists.")
+
         trainer = self._provide_trainer(data_type)
 
         data = trainer.decode(payload)

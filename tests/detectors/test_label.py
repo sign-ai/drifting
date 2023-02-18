@@ -1,6 +1,7 @@
 from drifting.drift_detection_server.label import LabelDriftDetectorCore
 
 
-def test_concept_detector():
+def test_label_detector():
+    """Test if detector created."""
     detector = LabelDriftDetectorCore()
-    assert True
+    assert detector.implementation_path == "label.LabelDriftDetector"

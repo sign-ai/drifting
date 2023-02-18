@@ -77,7 +77,12 @@ class LabelDriftDetectorCore(DetectorCore):
     def __init__(self):
         """See base class."""
         self._model: river.drift.ADWIN = None
-        self.implementation_path = "label.LabelDriftDetector"
+        self._implementation_path = "label.LabelDriftDetector"
+
+    @property
+    def implementation_path(self) -> str:
+        """See base class."""
+        return self._implementation_path
 
     def load(self, uri) -> bool:
         """See base class."""
