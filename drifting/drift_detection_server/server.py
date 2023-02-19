@@ -50,7 +50,9 @@ class DriftDetectionServer(MLModel):
         elif data_type == "image":
             pass
         elif data_type == "tabular":
-            pass
+            from drifting.drift_detection_server.tabular import TabularDriftDetectorCore
+
+            trainer = TabularDriftDetectorCore()
         elif data_type == "label":
             from drifting.drift_detection_server.label import LabelDriftDetectorCore
 
@@ -86,7 +88,7 @@ class DriftDetectionServer(MLModel):
 
         trainer = self._provide_trainer(data_type)
 
-        data = trainer.decode(payload)
+        data = trainer.decode_training_data(payload)
         detector = trainer.fit(data)
 
         persist(
