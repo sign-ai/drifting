@@ -32,8 +32,6 @@ async def test_fit(model_settings: ModelSettings):
         server = DriftDetectionServer(model_settings)
         server.settings.parameters.uri = tmp_dirname
 
-        await server.fit(payload=payload, 
-            data_type="label", 
-            detector_name="test_fit")
+        await server.fit(payload=payload, data_type="label", detector_name="test_fit")
 
         assert os.path.exists(os.path.join(tmp_dirname, "test_fit"))

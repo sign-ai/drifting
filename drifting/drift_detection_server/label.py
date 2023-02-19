@@ -25,7 +25,9 @@ class LabelDriftDetector(MLModel):
     async def load(self) -> bool:
         # pylint: disable=attribute-defined-outside-init
         try:
-            with open(os.path.join(self.settings.parameters.uri, "label_detector.pkl"), "rb") as file:
+            with open(
+                os.path.join(self.settings.parameters.uri, "label_detector.pkl"), "rb"
+            ) as file:
                 self._model: river.drift.ADWIN = pickle.load(file)
             self.ready = True
         except (
@@ -58,7 +60,7 @@ class LabelDriftDetector(MLModel):
             parameters={"content_type": "drift"},
             outputs=outputs,
         )
-    
+
     def _encode(self, drift_detected, estimation):
         """See base class."""
         outputs = []

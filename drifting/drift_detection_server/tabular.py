@@ -28,12 +28,8 @@ class TabularDriftDetector(MLModel):
         self.ready = True
         return self.ready
 
-    async def predict(
-        self, payload: types.InferenceRequest
-    ) -> types.InferenceResponse:
-        input_data = self.decode_request(
-            payload, default_codec=PandasCodec
-        )
+    async def predict(self, payload: types.InferenceRequest) -> types.InferenceResponse:
+        input_data = self.decode_request(payload, default_codec=PandasCodec)
         try:
             y = self._model.predict(np.array(input_data).flatten())
         except (ValueError, IndexError) as e:
@@ -44,9 +40,7 @@ class TabularDriftDetector(MLModel):
         outputs = []
         for key in y["data"]:
             outputs.append(
-                NumpyCodec.encode_output(
-                    name=key, payload=np.array([y["data"][key]])
-                )
+                NumpyCodec.encode_output(name=key, payload=np.array([y["data"][key]]))
             )
         return types.InferenceResponse(
             model_name=self.name,
@@ -74,9 +68,7 @@ class TabularDriftDetectorCore(DetectorCore):
         save_detector(detector, uri)
 
     def fit(self, data):
-        """Fit 
-
-        """
+        """Fit"""
         np.random.seed(0)
 
         pca = PCA(2)
