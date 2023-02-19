@@ -1,3 +1,5 @@
+"""Tabular drift detector."""
+
 import numpy as np
 from alibi_detect.cd import MMDDriftOnline
 from alibi_detect.utils.saving import load_detector, save_detector
@@ -5,6 +7,8 @@ from mlserver import MLModel, types
 from mlserver.codecs import NumpyCodec, PandasCodec
 from mlserver.errors import InferenceError, MLServerError
 from mlserver.types import InferenceRequest
+
+# pylint: disable=no-name-in-module
 from pydantic.error_wrappers import ValidationError
 from sklearn.decomposition import PCA
 
@@ -12,7 +16,10 @@ from drifting.drift_detection_server.detector_core import DetectorCore
 
 
 class TabularDriftDetector(MLModel):
+    """Class used during inference."""
+
     async def load(self) -> bool:
+        # pylint: disable=attribute-defined-outside-init
         try:
             self._model = load_detector(self.settings.parameters.uri)
         except (
@@ -21,31 +28,33 @@ class TabularDriftDetector(MLModel):
             EOFError,
             NotImplementedError,
             ValidationError,
-        ) as e:
+        ) as err:
             raise MLServerError(
-                f"Invalid configuration for model {self._settings.name}: {e}"
-            ) from e
+                f"Invalid configuration for model {self._settings.name}: {err}"
+            ) from err
         self.ready = True
         return self.ready
 
     async def predict(self, payload: types.InferenceRequest) -> types.InferenceResponse:
         input_data = self.decode_request(payload, default_codec=PandasCodec)
         try:
-            y = self._model.predict(np.array(input_data).flatten())
-        except (ValueError, IndexError) as e:
+            output = self._model.predict(np.array(input_data).flatten())
+        except (ValueError, IndexError) as err:
             raise InferenceError(
-                f"Invalid predict parameters for model {self._settings.name}: {e}"
-            ) from e
+                f"Invalid predict parameters for model {self._settings.name}: {err}"
+            ) from err
 
         outputs = []
-        for key in y["data"]:
+        for key in output["data"]:
             outputs.append(
-                NumpyCodec.encode_output(name=key, payload=np.array([y["data"][key]]))
+                NumpyCodec.encode_output(
+                    name=key, payload=np.array([output["data"][key]])
+                )
             )
         return types.InferenceResponse(
             model_name=self.name,
             model_version=self.version,
-            parameters=y["meta"],
+            parameters=output["meta"],
             outputs=outputs,
         )
 

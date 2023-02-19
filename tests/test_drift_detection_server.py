@@ -19,7 +19,7 @@ async def test_model_name_exists_error(model_settings: ModelSettings):
         server = DriftDetectionServer(model_settings)
         server.settings.parameters.uri = tmp_dirname
         os.makedirs(os.path.join(tmp_dirname, "test"))
-        with pytest.raises(Exception):
+        with pytest.raises(ModelNameExists):
             await server.fit(payload=payload, data_type="label", detector_name="test")
 
 

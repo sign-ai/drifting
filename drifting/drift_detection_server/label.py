@@ -13,9 +13,6 @@ from mlserver.codecs import NumpyCodec, NumpyRequestCodec
 from mlserver.errors import InferenceError, MLServerError
 from mlserver.types import InferenceRequest
 
-# pylint: disable=no-name-in-module
-from pydantic.error_wrappers import ValidationError
-
 from drifting.drift_detection_server.detector_core import DetectorCore
 
 
@@ -30,13 +27,7 @@ class LabelDriftDetector(MLModel):
             ) as file:
                 self._model: river.drift.ADWIN = pickle.load(file)
             self.ready = True
-        except (
-            ValueError,
-            FileNotFoundError,
-            EOFError,
-            NotImplementedError,
-            ValidationError,
-        ) as err:
+        except Exception as err:
             raise MLServerError(
                 f"Invalid configuration for model {self._settings.name}: {err}"
             ) from err

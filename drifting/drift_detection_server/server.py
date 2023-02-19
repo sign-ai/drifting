@@ -52,15 +52,15 @@ class DriftDetectionServer(MLModel):
         elif data_type == "tabular":
             from drifting.drift_detection_server.tabular import TabularDriftDetectorCore
 
-            trainer = TabularDriftDetectorCore()
+            trainer = TabularDriftDetectorCore()  # type: ignore
         elif data_type == "label":
             from drifting.drift_detection_server.label import LabelDriftDetectorCore
 
-            trainer: DetectorCore = LabelDriftDetectorCore()
+            trainer = LabelDriftDetectorCore()  # type: ignore
         elif data_type == "dummy":
             from drifting.drift_detection_server.dummy import DummyDriftDetectorCore
 
-            trainer = DummyDriftDetectorCore()
+            trainer = DummyDriftDetectorCore()  # type: ignore
 
         else:
             raise HTTPException(
