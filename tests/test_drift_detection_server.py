@@ -7,7 +7,7 @@ import pytest
 from mlserver.codecs import NumpyRequestCodec
 from mlserver.settings import ModelSettings
 
-from drifting.drift_detection_server.server import DriftDetectionServer, ModelNameExists
+from drifting.drift_detection_server.server import DriftDetectionServer
 
 
 @pytest.mark.asyncio
@@ -19,8 +19,10 @@ async def test_model_name_exists_error(model_settings: ModelSettings):
         server = DriftDetectionServer(model_settings)
         server.settings.parameters.uri = tmp_dirname
         os.makedirs(os.path.join(tmp_dirname, "test"))
-        with pytest.raises(ModelNameExists):
+        try:
             await server.fit(payload=payload, data_type="label", detector_name="test")
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            assert exc.args[0] == "Model with name 'test' already exists."
 
 
 @pytest.mark.asyncio
