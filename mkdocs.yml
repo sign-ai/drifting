@@ -7,6 +7,7 @@ copyright: Sign-AI
 plugins:
   - mkdocstrings
   - search
+  - mkdocs-jupyter
 
 markdown_extensions:
   - abbr
@@ -109,6 +110,6 @@ nav:
   - Server Architecture: server_architecture.md
   - Usage Scenarios: usage_scenarios.md
   - Examples:
-      - Images data: examples_pages/images.md
-      - Tabular data: examples_pages/tabular_data.md
-      - All kinds of drift: examples_pages/all_kinds_of_drift.md
+      - Label data: code/label_drift.ipynb
+      - Tabular data: code/tabular_drift.ipynb
+      - Text data: code/text_drift.ipynb
