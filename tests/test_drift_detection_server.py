@@ -20,7 +20,7 @@ async def test_model_name_exists_error(model_settings: ModelSettings):
         server.settings.parameters.uri = tmp_dirname
         os.makedirs(os.path.join(tmp_dirname, "test"))
         try:
-            await server.fit(payload=payload, data_type="label", detector_name="test")
+            await server.fit(payload=payload, drift_type="label", detector_name="test")
         except Exception as exc:  # pylint: disable=broad-exception-caught
             assert exc.args[0] == "Model with name 'test' already exists."
 
@@ -34,6 +34,6 @@ async def test_fit(model_settings: ModelSettings):
         server = DriftDetectionServer(model_settings)
         server.settings.parameters.uri = tmp_dirname
 
-        await server.fit(payload=payload, data_type="label", detector_name="test_fit")
+        await server.fit(payload=payload, drift_type="label", detector_name="test_fit")
 
         assert os.path.exists(os.path.join(tmp_dirname, "test_fit"))
