@@ -45,7 +45,7 @@ class Params:
 
     def dict(self):
         """Represent params as string"""
-        return {"detector_name": self.detector_name, "drift_type": self.drift_type}
+        return {"detector_name": self.detector_name, "drift_type": self.drift_type.value}
 
 
 def get_params_dict(drift_type: DriftType, detector_name: str) -> str:
@@ -81,19 +81,19 @@ class DriftDetectionServer(MLModel):
         """Provide drift detection object."""
         # pylint: disable=import-outside-toplevel,no-else-raise
 
-        if drift_type == DriftType.SEQUENTIAL:
+        if drift_type == DriftType.SEQUENTIAL.value:
             raise NotImplementedError(f"drift_type {drift_type} is not implemented yet")
-        elif drift_type == DriftType.IMAGE:
+        elif drift_type == DriftType.IMAGE.value:
             raise NotImplementedError(f"drift_type {drift_type} is not implemented yet")
-        elif drift_type == DriftType.TABULAR:
+        elif drift_type == DriftType.TABULAR.value:
             from drifting.drift_detection_server.tabular import TabularDriftDetectorCore
 
             trainer = TabularDriftDetectorCore()  # type: ignore
-        elif drift_type == DriftType.LABEL:
+        elif drift_type == DriftType.LABEL.value:
             from drifting.drift_detection_server.label import LabelDriftDetectorCore
 
             trainer = LabelDriftDetectorCore()  # type: ignore
-        elif drift_type == DriftType.DUMMY:
+        elif drift_type == DriftType.DUMMY.value:
             from drifting.drift_detection_server.dummy import DummyDriftDetectorCore
 
             trainer = DummyDriftDetectorCore()  # type: ignore
