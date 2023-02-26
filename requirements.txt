@@ -57,7 +57,7 @@ mypy==1.0.0
 mypy-extensions==1.0.0
 networkx==3.0
 numba==0.56.4
-numpy==1.24.2
+numpy
 opencv-python==4.7.0.72
 orjson==3.8.6
 packaging==23.0
