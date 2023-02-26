@@ -38,22 +38,25 @@ class DriftType(Enum):
 
 @dataclass
 class Params:
+    """Request parameters."""
+
     drift_type: DriftType
     detector_name: str
 
     def dict(self):
         """Represent params as string"""
         return {"detector_name": self.detector_name, "drift_type": self.drift_type}
-    
-    
-def get_params(drift_type: DriftType, detector_name: str) -> str:
+
+
+def get_params_dict(drift_type: DriftType, detector_name: str) -> str:
+    """Return"""
     return Params(drift_type=drift_type, detector_name=detector_name).dict()
 
 
 class DriftDetectionServer(MLModel):
     """Drift Detection Server - main drifting package entrypoint.
 
-    Drift Detection Serveris in fact a separate `MLModel` with additional
+    Drift Detection Server is in fact a separate `MLModel` with additional
     fit method that allows to fit the new detectors.
     """
 
@@ -63,6 +66,12 @@ class DriftDetectionServer(MLModel):
         return self.ready
 
     async def predict(self, payload: InferenceRequest) -> float:
+        """Predict function is not used in DriftDetectionServer.
+
+        The function is necessary as `DriftDetectionServer` inherits from
+        MLModel. mlserver manages all the model repository and all regular
+        detectors and at the same time it exposes fit method that allows to fit
+        new detectors."""
         raise ValueError(
             "DriftDetectionServer is used only for adding the new models and "
             f"versions using {FIT_REST_PATH} endpoint"
@@ -70,7 +79,7 @@ class DriftDetectionServer(MLModel):
 
     def _provide_trainer(self, drift_type: str) -> DetectorCore:
         """Provide drift detection object."""
-        # pylint: disable=import-outside-toplevel
+        # pylint: disable=import-outside-toplevel,no-else-raise
 
         if drift_type == DriftType.SEQUENTIAL.value:
             raise NotImplementedError(f"drift_type {drift_type} is not implemented yet")
@@ -112,9 +121,11 @@ class DriftDetectionServer(MLModel):
         """
         if os.path.exists(os.path.join(self.settings.parameters.uri, detector_name)):
             return JSONResponse(
-                    status_code=409,
-                    content={"message": f"Model with name '{detector_name}' already exists."},
-                )
+                status_code=409,
+                content={
+                    "message": f"Model with name '{detector_name}' already exists."
+                },
+            )
 
         trainer = self._provide_trainer(drift_type)
 
