@@ -51,11 +51,6 @@ class Params:
         }
 
 
-def get_params_dict(drift_type: DriftType, detector_name: str) -> str:
-    """Return parameters as dictionary."""
-    return Params(drift_type=drift_type, detector_name=detector_name).dict()
-
-
 class DriftDetectionServer(MLModel):
     """Drift Detection Server - main drifting package entrypoint.
 

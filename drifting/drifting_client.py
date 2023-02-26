@@ -7,7 +7,7 @@ import requests
 from mlserver import types
 from mlserver.codecs import NumpyRequestCodec, PandasCodec
 
-from drifting.drift_detection_server.server import DriftType, get_params_dict
+from drifting.drift_detection_server.server import DriftType, Params
 
 DATA_PLANE_VERSION = "v2"
 
@@ -51,6 +51,11 @@ def encode_infer_data(data, drift_type: DriftType) -> types.InferenceRequest:
         payload = PandasCodec.encode_request(data)
 
     return payload
+
+
+def get_params_dict(drift_type: DriftType, detector_name: str) -> str:
+    """Return parameters as dictionary."""
+    return Params(drift_type=drift_type, detector_name=detector_name).dict()
 
 
 class DriftingClient:
