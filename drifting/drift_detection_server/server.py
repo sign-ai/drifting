@@ -81,19 +81,19 @@ class DriftDetectionServer(MLModel):
         """Provide drift detection object."""
         # pylint: disable=import-outside-toplevel,no-else-raise
 
-        if drift_type == DriftType.SEQUENTIAL.value:
+        if drift_type == DriftType.SEQUENTIAL:
             raise NotImplementedError(f"drift_type {drift_type} is not implemented yet")
-        elif drift_type == DriftType.IMAGE.value:
+        elif drift_type == DriftType.IMAGE:
             raise NotImplementedError(f"drift_type {drift_type} is not implemented yet")
-        elif drift_type == DriftType.TABULAR.value:
+        elif drift_type == DriftType.TABULAR:
             from drifting.drift_detection_server.tabular import TabularDriftDetectorCore
 
             trainer = TabularDriftDetectorCore()  # type: ignore
-        elif drift_type == DriftType.LABEL.value:
+        elif drift_type == DriftType.LABEL:
             from drifting.drift_detection_server.label import LabelDriftDetectorCore
 
             trainer = LabelDriftDetectorCore()  # type: ignore
-        elif drift_type == DriftType.DUMMY.value:
+        elif drift_type == DriftType.DUMMY:
             from drifting.drift_detection_server.dummy import DummyDriftDetectorCore
 
             trainer = DummyDriftDetectorCore()  # type: ignore
@@ -112,7 +112,7 @@ class DriftDetectionServer(MLModel):
         payload: InferenceRequest,
         drift_type: str,
         detector_name: str,
-    ) -> str:
+    ) -> JSONResponse:
         """Fit the detector.
 
         Based on drift_type, the appropriate detector is provided, fitted, and
@@ -140,4 +140,7 @@ class DriftDetectionServer(MLModel):
             detector_name=detector_name,
         )
 
-        return "Successfully fitted model."
+        return JSONResponse(
+            status_code=200,
+            content={"message": f"Successfully fitted model '{detector_name}'"},
+        )

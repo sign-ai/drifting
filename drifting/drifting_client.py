@@ -14,14 +14,14 @@ DATA_PLANE_VERSION = "v2"
 
 def encode_fitting_data(data, drift_type: DriftType) -> types.InferenceRequest:
     """Encode fitting data to InferenceRequest."""
-    if drift_type == DriftType.LABEL.value:
+    if drift_type == DriftType.LABEL:
         assert isinstance(
             data, np.ndarray
         ), "Label drift detection requires input data being np.ndarray"
         assert len(data.shape) == 1, "Label drift detection requires 2d data"
         payload = NumpyRequestCodec.encode_request(data)
 
-    if drift_type == DriftType.TABULAR.value:
+    if drift_type == DriftType.TABULAR:
         assert isinstance(
             data, pd.DataFrame
         ), "Tabular drift detection requires input data being pd.DataFrame"
@@ -33,13 +33,13 @@ def encode_fitting_data(data, drift_type: DriftType) -> types.InferenceRequest:
 
 def encode_infer_data(data, drift_type: DriftType) -> types.InferenceRequest:
     """Encode infer data to InferenceRequest."""
-    if drift_type == DriftType.LABEL.value:
+    if drift_type == DriftType.LABEL:
         assert isinstance(
             data, float
         ), "Label drift detection requires input data being a float"
         payload = NumpyRequestCodec.encode_request(data)
 
-    if drift_type == DriftType.TABULAR.value:
+    if drift_type == DriftType.TABULAR:
         if isinstance(data, pd.DataFrame):
             assert len(data.shape) == 2, "Tabular drift detection requires 2d data"
         elif isinstance(data, pd.Series):
