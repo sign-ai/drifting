@@ -6,3 +6,4 @@ pytest-asyncio
 black
 pylint
 mypy
+types-requests
