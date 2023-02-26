@@ -1,5 +1,5 @@
 """Implementation of client-side tools for `drifting` package."""
-from typing import Tuple
+from typing import Tuple, Union
 
 import numpy as np
 import pandas as pd

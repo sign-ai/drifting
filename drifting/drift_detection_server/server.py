@@ -44,12 +44,15 @@ class Params:
     detector_name: str
 
     def dict(self):
-        """Represent params as string"""
-        return {"detector_name": self.detector_name, "drift_type": self.drift_type.value}
+        """Represent params as string."""
+        return {
+            "detector_name": self.detector_name,
+            "drift_type": self.drift_type.value,
+        }
 
 
 def get_params_dict(drift_type: DriftType, detector_name: str) -> str:
-    """Return"""
+    """Return parameters as dictionary."""
     return Params(drift_type=drift_type, detector_name=detector_name).dict()
 
 
