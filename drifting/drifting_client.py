@@ -21,12 +21,20 @@ def encode_fitting_data(data, drift_type: DriftType) -> types.InferenceRequest:
         assert len(data.shape) == 1, "Label drift detection requires 2d data"
         payload = NumpyRequestCodec.encode_request(data)
 
-    if drift_type == DriftType.TABULAR:
+    elif drift_type == DriftType.TABULAR:
         assert isinstance(
             data, pd.DataFrame
         ), "Tabular drift detection requires input data being pd.DataFrame"
         assert len(data.shape) == 2, "Tabular drift detection requires 2d data"
         payload = PandasCodec.encode_request(data)
+
+    elif drift_type == DriftType.DUMMY:
+        payload = NumpyRequestCodec.encode_request(data)
+
+    else:
+        raise NotImplementedError(
+            "Only DriftType.TABULAR, DriftType.LABEL, DriftType.DUMMY implemented so far."
+        )
 
     return payload
 
@@ -39,7 +47,7 @@ def encode_infer_data(data, drift_type: DriftType) -> types.InferenceRequest:
         ), "Label drift detection requires input data being a float"
         payload = NumpyRequestCodec.encode_request(data)
 
-    if drift_type == DriftType.TABULAR:
+    elif drift_type == DriftType.TABULAR:
         if isinstance(data, pd.DataFrame):
             assert len(data.shape) == 2, "Tabular drift detection requires 2d data"
         elif isinstance(data, pd.Series):
@@ -49,6 +57,14 @@ def encode_infer_data(data, drift_type: DriftType) -> types.InferenceRequest:
                 "Tabular drift detection requires input data being pd.DataFrame"
             )
         payload = PandasCodec.encode_request(data)
+
+    elif drift_type == DriftType.DUMMY:
+        payload = NumpyRequestCodec.encode_request(data)
+
+    else:
+        raise NotImplementedError(
+            "Only DriftType.TABULAR, DriftType.LABEL, DriftType.DUMMY implemented so far."
+        )
 
     return payload
 

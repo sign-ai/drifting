@@ -7,3 +7,4 @@ black
 pylint
 mypy
 types-requests
+requests-mock
