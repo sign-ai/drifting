@@ -3,9 +3,15 @@
 import json
 
 import numpy as np
+import pandas as pd
 
 from drifting.drift_detection_server.server import DriftType
-from drifting.drifting_client import DriftingClient, encode_infer_data, get_params_dict
+from drifting.drifting_client import (
+    DriftingClient,
+    encode_infer_data,
+    encode_fitting_data,
+    get_params_dict,
+)
 
 
 def test_client_flow(requests_mock):
@@ -35,7 +41,43 @@ def test_client_flow(requests_mock):
 
 def test_get_params_dict():
     """Test get_params_dict function."""
+    params = get_params_dict(DriftType.LABEL, detector_name="test")
+    assert "drift_type" in params
+    assert params["drift_type"] == "label"
 
 
-def test_encode_fit_data():
+def test_encode_infer_data():
     """Test client encoding functions."""
+    label_data = np.array([0.0])
+    payload = encode_infer_data(label_data, DriftType.LABEL)
+
+    assert len(payload.inputs) == 1
+    assert payload.inputs[0].shape[0] == 1
+    assert payload.inputs[0].shape[1] == 1
+
+    tabular_data = pd.DataFrame([[0, 0]], columns=["a", "b"])
+    payload = encode_infer_data(tabular_data, DriftType.TABULAR)
+
+    assert len(payload.inputs) == 2
+    assert payload.inputs[0].shape[0] == 1
+    assert payload.inputs[0].shape[1] == 1
+    assert payload.inputs[1].shape[0] == 1
+    assert payload.inputs[1].shape[1] == 1
+
+
+def test_encode_fitting_data():
+    """Test client encoding functions."""
+    label_data = np.zeros((10,))
+    payload = encode_fitting_data(label_data, DriftType.LABEL)
+    assert len(payload.inputs) == 1
+    assert payload.inputs[0].shape[0] == 10
+    assert payload.inputs[0].shape[1] == 1
+
+    tabular_data = pd.DataFrame([[0, 0], [0, 0], [0, 0]], columns=["a", "b"])
+    payload = encode_fitting_data(tabular_data, DriftType.TABULAR)
+
+    assert len(payload.inputs) == 2
+    assert payload.inputs[0].shape[0] == 3
+    assert payload.inputs[0].shape[1] == 1
+    assert payload.inputs[1].shape[0] == 3
+    assert payload.inputs[1].shape[1] == 1

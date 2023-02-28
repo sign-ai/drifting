@@ -43,15 +43,22 @@ def encode_infer_data(data, drift_type: DriftType) -> types.InferenceRequest:
     """Encode infer data to InferenceRequest."""
     if drift_type == DriftType.LABEL:
         assert isinstance(
-            data, float
+            data, np.ndarray
         ), "Label drift detection requires input data being a float"
+        assert (
+            len(data.shape) == 1 and data.shape[0] == 1
+        ), "Label drift detection requires an array of shape (1,)"
         payload = NumpyRequestCodec.encode_request(data)
 
     elif drift_type == DriftType.TABULAR:
         if isinstance(data, pd.DataFrame):
-            assert len(data.shape) == 2, "Tabular drift detection requires 2d data"
+            assert (
+                len(data.shape) == 2
+            ), "Tabular drift detection requires 2d data with shape (1, N)"
         elif isinstance(data, pd.Series):
-            pass
+            raise ValueError(
+                "Pandas data has to be passed as DataFrame with shape (1, N), not a Series"
+            )
         else:
             raise ValueError(
                 "Tabular drift detection requires input data being pd.DataFrame"
