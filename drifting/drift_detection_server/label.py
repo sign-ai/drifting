@@ -43,7 +43,9 @@ class LabelDriftDetector(MLModel):
                 f"Invalid predict parameters for model {self._settings.name}: {err}"
             ) from err
 
-        outputs = self._encode(self._model.drift_detected, self._model.estimation)
+        outputs = self._encode_response(
+            self._model.drift_detected, self._model.estimation
+        )
 
         return types.InferenceResponse(
             model_name=self.name,
@@ -52,7 +54,7 @@ class LabelDriftDetector(MLModel):
             outputs=outputs,
         )
 
-    def _encode(self, drift_detected, estimation):
+    def _encode_response(self, drift_detected, estimation):
         """See base class."""
         outputs = []
         outputs.append(

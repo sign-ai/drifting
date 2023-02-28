@@ -1,8 +1,12 @@
 """Drift Detection Server."""
 
 import os
+from enum import Enum
+from dataclasses import dataclass
 
 from fastapi import HTTPException, status  # pylint: disable=no-name-in-module
+from fastapi.responses import JSONResponse
+
 from mlserver import MLModel
 from mlserver.handlers.custom import custom_handler
 from mlserver.types import InferenceRequest
@@ -15,18 +19,42 @@ FIT_REST_PATH = "/v2/models/fit/"
 ALLOWED_ALGORITHMS = ["MMDDriftOnline"]
 
 
-class ModelNameExists(Exception):
+class ModelNameExists(HTTPException):
     """Raise when trying to train a model that already exists."""
 
-    def __init__(self, msg: str, status_code: int = status.HTTP_400_BAD_REQUEST):
-        super().__init__(msg)
-        self.status_code = status_code
+    def __init__(self, detail: str, status_code: int = status.HTTP_400_BAD_REQUEST):
+        super().__init__(status_code, detail)
+
+
+class DriftType(Enum):
+    """Drift types implemented by DriftDetectionServer."""
+
+    LABEL = "label"
+    TABULAR = "tabular"
+    SEQUENTIAL = "sequential"
+    IMAGE = "image"
+    DUMMY = "dummy"
+
+
+@dataclass
+class Params:
+    """Request parameters."""
+
+    drift_type: DriftType
+    detector_name: str
+
+    def dict(self):
+        """Represent params as string."""
+        return {
+            "detector_name": self.detector_name,
+            "drift_type": self.drift_type.value,
+        }
 
 
 class DriftDetectionServer(MLModel):
     """Drift Detection Server - main drifting package entrypoint.
 
-    Drift Detection Serveris in fact a separate `MLModel` with additional
+    Drift Detection Server is in fact a separate `MLModel` with additional
     fit method that allows to fit the new detectors.
     """
 
@@ -36,28 +64,34 @@ class DriftDetectionServer(MLModel):
         return self.ready
 
     async def predict(self, payload: InferenceRequest) -> float:
+        """Predict function is not used in DriftDetectionServer.
+
+        The function is necessary as `DriftDetectionServer` inherits from
+        MLModel. mlserver manages all the model repository and all regular
+        detectors and at the same time it exposes fit method that allows to fit
+        new detectors."""
         raise ValueError(
             "DriftDetectionServer is used only for adding the new models and "
             f"versions using {FIT_REST_PATH} endpoint"
         )
 
-    def _provide_trainer(self, data_type: str) -> DetectorCore:
+    def _provide_trainer(self, drift_type: str) -> DetectorCore:
         """Provide drift detection object."""
-        # pylint: disable=import-outside-toplevel
+        # pylint: disable=import-outside-toplevel,no-else-raise
 
-        if data_type == "sequential":
-            pass
-        elif data_type == "image":
-            pass
-        elif data_type == "tabular":
+        if drift_type == DriftType.SEQUENTIAL.value:
+            raise NotImplementedError(f"drift_type {drift_type} is not implemented yet")
+        elif drift_type == DriftType.IMAGE.value:
+            raise NotImplementedError(f"drift_type {drift_type} is not implemented yet")
+        elif drift_type == DriftType.TABULAR.value:
             from drifting.drift_detection_server.tabular import TabularDriftDetectorCore
 
             trainer = TabularDriftDetectorCore()  # type: ignore
-        elif data_type == "label":
+        elif drift_type == DriftType.LABEL.value:
             from drifting.drift_detection_server.label import LabelDriftDetectorCore
 
             trainer = LabelDriftDetectorCore()  # type: ignore
-        elif data_type == "dummy":
+        elif drift_type == DriftType.DUMMY.value:
             from drifting.drift_detection_server.dummy import DummyDriftDetectorCore
 
             trainer = DummyDriftDetectorCore()  # type: ignore
@@ -65,7 +99,7 @@ class DriftDetectionServer(MLModel):
         else:
             raise HTTPException(
                 status_code=404,
-                detail="data_type has to be one of "
+                detail="drift_type has to be one of "
                 '["sequential", "image", "tabular", "label"]',
             )
         return trainer
@@ -74,19 +108,24 @@ class DriftDetectionServer(MLModel):
     async def fit(
         self,
         payload: InferenceRequest,
-        data_type: str = "tabular",
-        detector_name: str = "detector_name",
-    ) -> str:
+        drift_type: str,
+        detector_name: str,
+    ) -> JSONResponse:
         """Fit the detector.
 
-        Based on data_type, the appropriate detector is provided, fitted, and
+        Based on drift_type, the appropriate detector is provided, fitted, and
         persisted.
         After fitting, algorithm is not automatically loaded.
         """
         if os.path.exists(os.path.join(self.settings.parameters.uri, detector_name)):
-            raise ModelNameExists(f"Model with name '{detector_name}' already exists.")
+            return JSONResponse(
+                status_code=409,
+                content={
+                    "message": f"Model with name '{detector_name}' already exists."
+                },
+            )
 
-        trainer = self._provide_trainer(data_type)
+        trainer = self._provide_trainer(drift_type)
 
         data = trainer.decode_training_data(payload)
         detector = trainer.fit(data)
@@ -99,4 +138,7 @@ class DriftDetectionServer(MLModel):
             detector_name=detector_name,
         )
 
-        return "Successfully fitted model."
+        return JSONResponse(
+            status_code=200,
+            content={"message": f"Successfully fitted model '{detector_name}'"},
+        )

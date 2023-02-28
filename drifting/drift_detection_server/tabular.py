@@ -6,7 +6,6 @@ from alibi_detect.utils.saving import load_detector, save_detector
 from mlserver import MLModel, types
 from mlserver.codecs import NumpyCodec, PandasCodec
 from mlserver.errors import InferenceError, MLServerError
-from mlserver.types import InferenceRequest
 
 # pylint: disable=no-name-in-module
 from pydantic.error_wrappers import ValidationError
@@ -96,6 +95,6 @@ class TabularDriftDetectorCore(DetectorCore):
         )
         return detector
 
-    def decode_training_data(self, payload: InferenceRequest):
+    def decode_training_data(self, payload: types.InferenceRequest):
         """See base class."""
         return PandasCodec.decode_request(payload)
