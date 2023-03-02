@@ -44,7 +44,7 @@ def encode_infer_data(data, drift_type: DriftType) -> types.InferenceRequest:
     if drift_type == DriftType.LABEL:
         assert isinstance(
             data, np.ndarray
-        ), "Label drift detection requires input data being a float"
+        ), "Label drift detection requires an array of shape (1,)"
         assert (
             len(data.shape) == 1 and data.shape[0] == 1
         ), "Label drift detection requires an array of shape (1,)"
