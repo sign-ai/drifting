@@ -7,12 +7,11 @@ import numpy as np
 from alibi_detect.cd import CVMDriftOnline
 from alibi_detect.utils.saving import load_detector, save_detector
 from mlserver import MLModel, types
-from mlserver.codecs import NumpyCodec, PandasCodec, NumpyRequestCodec
+from mlserver.codecs import NumpyCodec, NumpyRequestCodec
 from mlserver.errors import InferenceError, MLServerError
 
 # pylint: disable=no-name-in-module
 from pydantic.error_wrappers import ValidationError
-from sklearn.decomposition import PCA
 
 from drifting.detectors.detector_core import DetectorCore
 
@@ -51,17 +50,14 @@ class LabelDriftDetector(MLModel):
             val = output["data"][key]
             if isinstance(val, np.ndarray):
                 val = np.nan_to_num(val)
-            outputs.append(
-                NumpyCodec.encode_output(
-                    name=key, payload=np.array([val])
-                )
-            )
+            outputs.append(NumpyCodec.encode_output(name=key, payload=np.array([val])))
         return types.InferenceResponse(
             model_name=self.name,
             model_version=self.version,
             parameters=output["meta"],
             outputs=outputs,
         )
+
 
 class LabelDriftDetectorCore(DetectorCore):
     """See base class."""
@@ -81,10 +77,9 @@ class LabelDriftDetectorCore(DetectorCore):
         save_detector(detector, uri)
 
     def fit(self, data):
-        """Fit CVMDriftOnline detector.
-        """
+        """Fit CVMDriftOnline detector."""
         ert = 150
-        window_sizes = [20,40]
+        window_sizes = [20, 40]
         detector = CVMDriftOnline(data.flatten(), ert, window_sizes)
 
         return detector
