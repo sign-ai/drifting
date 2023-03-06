@@ -1,17 +1,16 @@
 """Drift Detection Server."""
 
 import os
-from enum import Enum
 from dataclasses import dataclass
+from enum import Enum
 
 from fastapi import HTTPException, status  # pylint: disable=no-name-in-module
 from fastapi.responses import JSONResponse
-
 from mlserver import MLModel
 from mlserver.handlers.custom import custom_handler
 from mlserver.types import InferenceRequest
 
-from drifting.drift_detection_server.detector_core import DetectorCore
+from drifting.detectors.detector_core import DetectorCore
 from drifting.storage.persistor import persist
 
 FIT_REST_PATH = "/v2/models/fit/"
@@ -84,15 +83,15 @@ class DriftDetectionServer(MLModel):
         elif drift_type == DriftType.IMAGE.value:
             raise NotImplementedError(f"drift_type {drift_type} is not implemented yet")
         elif drift_type == DriftType.TABULAR.value:
-            from drifting.drift_detection_server.tabular import TabularDriftDetectorCore
+            from drifting.detectors.tabular import TabularDriftDetectorCore
 
             trainer = TabularDriftDetectorCore()  # type: ignore
         elif drift_type == DriftType.LABEL.value:
-            from drifting.drift_detection_server.label import LabelDriftDetectorCore
+            from drifting.detectors.label import LabelDriftDetectorCore
 
             trainer = LabelDriftDetectorCore()  # type: ignore
         elif drift_type == DriftType.DUMMY.value:
-            from drifting.drift_detection_server.dummy import DummyDriftDetectorCore
+            from drifting.detectors.dummy import DummyDriftDetectorCore
 
             trainer = DummyDriftDetectorCore()  # type: ignore
 

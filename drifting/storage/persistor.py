@@ -23,7 +23,7 @@ def create_detector_package(
     # Copy implementation to the new detector package
     implementation_file = "/".join(implementation_path.split(".")[:-1]) + ".py"
     source_path = os.path.join(
-        PACKAGE_ROOT, "drift_detection_server", implementation_file
+        PACKAGE_ROOT, "detectors", implementation_file
     )
     destination_path = os.path.join(
         tmp_dirname, implementation_file.rsplit("/", maxsplit=1)[-1]

@@ -123,7 +123,7 @@ class DriftingClient:
         endpoint = (
             f"{self.host}/{DATA_PLANE_VERSION}/repository/models/{detector_name}/load"
         )
-        response = requests.post(endpoint, timeout=self.regular_timeout)
+        response = requests.post(endpoint, timeout=self.fit_timeout)
         response.raise_for_status()
         return response
 

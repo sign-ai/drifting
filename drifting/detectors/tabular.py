@@ -11,7 +11,7 @@ from mlserver.errors import InferenceError, MLServerError
 from pydantic.error_wrappers import ValidationError
 from sklearn.decomposition import PCA
 
-from drifting.drift_detection_server.detector_core import DetectorCore
+from drifting.detectors.detector_core import DetectorCore
 
 
 class TabularDriftDetector(MLModel):

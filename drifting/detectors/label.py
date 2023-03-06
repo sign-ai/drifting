@@ -3,17 +3,18 @@
 Label drift detection works both for classification and regression labels.
 """
 
-import os
-import pickle
-
 import numpy as np
-import river.drift
+from alibi_detect.cd import CVMDriftOnline
+from alibi_detect.utils.saving import load_detector, save_detector
 from mlserver import MLModel, types
-from mlserver.codecs import NumpyCodec, NumpyRequestCodec
+from mlserver.codecs import NumpyCodec, PandasCodec, NumpyRequestCodec
 from mlserver.errors import InferenceError, MLServerError
-from mlserver.types import InferenceRequest
 
-from drifting.drift_detection_server.detector_core import DetectorCore
+# pylint: disable=no-name-in-module
+from pydantic.error_wrappers import ValidationError
+from sklearn.decomposition import PCA
+
+from drifting.detectors.detector_core import DetectorCore
 
 
 class LabelDriftDetector(MLModel):
@@ -22,56 +23,52 @@ class LabelDriftDetector(MLModel):
     async def load(self) -> bool:
         # pylint: disable=attribute-defined-outside-init
         try:
-            with open(
-                os.path.join(self.settings.parameters.uri, "label_detector.pkl"), "rb"
-            ) as file:
-                self._model: river.drift.ADWIN = pickle.load(file)
-            self.ready = True
-        except Exception as err:
+            self._model = load_detector(self.settings.parameters.uri)
+        except (
+            ValueError,
+            FileNotFoundError,
+            EOFError,
+            NotImplementedError,
+            ValidationError,
+        ) as err:
             raise MLServerError(
                 f"Invalid configuration for model {self._settings.name}: {err}"
             ) from err
-
+        self.ready = True
         return self.ready
 
     async def predict(self, payload: types.InferenceRequest) -> types.InferenceResponse:
-        input_data = self.decode_request(payload, default_codec=NumpyRequestCodec)
+        input_data = self.decode_request(payload, default_codec=NumpyCodec)
         try:
-            self._model.update(input_data)
+            output = self._model.predict(np.array(input_data).flatten())
         except (ValueError, IndexError) as err:
             raise InferenceError(
                 f"Invalid predict parameters for model {self._settings.name}: {err}"
             ) from err
 
-        outputs = self._encode_response(
-            self._model.drift_detected, self._model.estimation
-        )
-
+        outputs = []
+        for key in output["data"]:
+            val = output["data"][key]
+            if isinstance(val, np.ndarray):
+                val = np.nan_to_num(val)
+            outputs.append(
+                NumpyCodec.encode_output(
+                    name=key, payload=np.array([val])
+                )
+            )
         return types.InferenceResponse(
             model_name=self.name,
             model_version=self.version,
-            parameters={"content_type": "drift"},
+            parameters=output["meta"],
             outputs=outputs,
         )
-
-    def _encode_response(self, drift_detected, estimation):
-        """See base class."""
-        outputs = []
-        outputs.append(
-            NumpyCodec.encode_output(name="drift", payload=np.array([drift_detected]))
-        )
-        outputs.append(
-            NumpyCodec.encode_output(name="stat_val", payload=np.array([estimation]))
-        )
-        return outputs
-
 
 class LabelDriftDetectorCore(DetectorCore):
     """See base class."""
 
     def __init__(self):
         """See base class."""
-        self._model: river.drift.ADWIN = None
+        self._model: CVMDriftOnline = None
         self._implementation_path = "label.LabelDriftDetector"
 
     @property
@@ -81,19 +78,17 @@ class LabelDriftDetectorCore(DetectorCore):
 
     def save(self, detector, uri):
         """See base class."""
-        with open(os.path.join(uri, "label_detector.pkl"), "wb") as file:
-            pickle.dump(detector, file)
+        save_detector(detector, uri)
 
     def fit(self, data):
-        """Fit ADWIN detector.
-
-        The example usage:
-        https://riverml.xyz/0.11.1/examples/concept-drift-detection/
+        """Fit CVMDriftOnline detector.
         """
-        detector = river.drift.ADWIN()
+        ert = 150
+        window_sizes = [20,40]
+        detector = CVMDriftOnline(data.flatten(), ert, window_sizes)
 
         return detector
 
-    def decode_training_data(self, payload: InferenceRequest):
+    def decode_training_data(self, payload: types.InferenceRequest):
         """See base class."""
         return NumpyRequestCodec.decode_request(payload)
