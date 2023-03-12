@@ -2,60 +2,18 @@
 
 import numpy as np
 from alibi_detect.cd import MMDDriftOnline
-from alibi_detect.utils.saving import load_detector, save_detector
-from mlserver import MLModel, types
-from mlserver.codecs import NumpyCodec, PandasCodec
-from mlserver.errors import InferenceError, MLServerError
-
-# pylint: disable=no-name-in-module
-from pydantic.error_wrappers import ValidationError
+from alibi_detect.utils.saving import save_detector
+from mlserver import types
+from mlserver.codecs import PandasCodec
 from sklearn.decomposition import PCA
 
+from drifting.detectors.alibi_detector import AlibiDetector
 from drifting.detectors.detector_core import DetectorCore
 
 
-class TabularDriftDetector(MLModel):
-    """Class used during inference."""
-
-    async def load(self) -> bool:
-        # pylint: disable=attribute-defined-outside-init
-        try:
-            self._model = load_detector(self.settings.parameters.uri)
-        except (
-            ValueError,
-            FileNotFoundError,
-            EOFError,
-            NotImplementedError,
-            ValidationError,
-        ) as err:
-            raise MLServerError(
-                f"Invalid configuration for model {self._settings.name}: {err}"
-            ) from err
-        self.ready = True
-        return self.ready
-
-    async def predict(self, payload: types.InferenceRequest) -> types.InferenceResponse:
-        input_data = self.decode_request(payload, default_codec=PandasCodec)
-        try:
-            output = self._model.predict(np.array(input_data).flatten())
-        except (ValueError, IndexError) as err:
-            raise InferenceError(
-                f"Invalid predict parameters for model {self._settings.name}: {err}"
-            ) from err
-
-        outputs = []
-        for key in output["data"]:
-            outputs.append(
-                NumpyCodec.encode_output(
-                    name=key, payload=np.array([output["data"][key]])
-                )
-            )
-        return types.InferenceResponse(
-            model_name=self.name,
-            model_version=self.version,
-            parameters=output["meta"],
-            outputs=outputs,
-        )
+class TabularDriftDetector(AlibiDetector):
+    def decode_drift_request(self, inference_request):
+        return super().decode_request(inference_request, default_codec=PandasCodec)
 
 
 class TabularDriftDetectorCore(DetectorCore):
@@ -82,8 +40,8 @@ class TabularDriftDetectorCore(DetectorCore):
         pca = PCA(2)
         pca.fit(data)
 
-        ert = 50
-        window_size = 10
+        ert = 200
+        window_size = 80
 
         detector = MMDDriftOnline(
             data,
