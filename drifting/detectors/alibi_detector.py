@@ -55,6 +55,6 @@ class AlibiDetector(MLModel):
             outputs=outputs,
         )
 
-    def decode_drift_request(self):
+    def decode_drift_request(self, inference_request: types.InferenceRequest):
         """Decode the request according to drift codec."""
         raise NotImplementedError

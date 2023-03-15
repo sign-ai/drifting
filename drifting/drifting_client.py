@@ -142,6 +142,6 @@ class DriftingClient:
 
         response_dict = response.json()
         is_drift = response_dict["outputs"][0]["data"][0]
-        stat_val = response_dict["outputs"][1]["data"][0]
+        test_stat = response_dict["outputs"][6]["data"][0]
 
-        return is_drift, stat_val
+        return is_drift, test_stat
