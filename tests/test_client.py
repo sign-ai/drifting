@@ -31,12 +31,18 @@ def test_client_flow(requests_mock):
     )
     client.load(detector_name="test")
 
-    output_mock = {"outputs": [{"data": [False]}, {"data": [0.0]}]}
+    output_mock = {
+        "outputs": [{"data": [False]}, {"data": [0.0]}] + [{"data": [0]}] * 5
+    }
     requests_mock.post(
         "http://localhost:8080/v2/models/test/infer?detector_name=test&drift_type=dummy",
         text=json.dumps(output_mock),
     )
-    client.predict(data, drift_type=DriftType.DUMMY, detector_name="test")
+    is_drift, test_stat = client.predict(
+        data, drift_type=DriftType.DUMMY, detector_name="test"
+    )
+    assert not is_drift
+    assert test_stat == 0
 
 
 def test_get_params_dict():

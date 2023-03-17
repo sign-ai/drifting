@@ -1,4 +1,4 @@
-from drifting.drift_detection_server.label import LabelDriftDetectorCore
+from drifting.detectors.label import LabelDriftDetectorCore
 
 
 def test_label_detector():

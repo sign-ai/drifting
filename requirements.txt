@@ -1,6 +1,5 @@
 alibi-detect
 mlserver
-river
 pytest
 pytest-asyncio
 black

@@ -44,7 +44,7 @@ def encode_infer_data(data, drift_type: DriftType) -> types.InferenceRequest:
     if drift_type == DriftType.LABEL:
         assert isinstance(
             data, np.ndarray
-        ), "Label drift detection requires input data being a float"
+        ), "Label drift detection requires an array of shape (1,)"
         assert (
             len(data.shape) == 1 and data.shape[0] == 1
         ), "Label drift detection requires an array of shape (1,)"
@@ -123,7 +123,7 @@ class DriftingClient:
         endpoint = (
             f"{self.host}/{DATA_PLANE_VERSION}/repository/models/{detector_name}/load"
         )
-        response = requests.post(endpoint, timeout=self.regular_timeout)
+        response = requests.post(endpoint, timeout=self.fit_timeout)
         response.raise_for_status()
         return response
 
@@ -142,6 +142,6 @@ class DriftingClient:
 
         response_dict = response.json()
         is_drift = response_dict["outputs"][0]["data"][0]
-        stat_val = response_dict["outputs"][1]["data"][0]
+        test_stat = response_dict["outputs"][6]["data"][0]
 
-        return is_drift, stat_val
+        return is_drift, test_stat

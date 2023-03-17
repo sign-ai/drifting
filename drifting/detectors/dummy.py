@@ -6,7 +6,7 @@ Used for testing purposes, may be used as placeholder.
 from mlserver import MLModel, types
 from mlserver.types import InferenceRequest
 
-from drifting.drift_detection_server.detector_core import DetectorCore
+from drifting.detectors.detector_core import DetectorCore
 
 
 class DummyDetector(MLModel):
