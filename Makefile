@@ -35,8 +35,12 @@ format:
 	${CMD} -m black ${PACKAGE_DIR} ${TEST_DIR}
 
 build:
-	rm -rf dist
-	poetry build
+	python setup.py sdist bdist_wheel
+
+bump:
+	semantic-release changelog > CHANGELOG.md
+	semantic-release version
 
 release:
-	semantic-release publish
+	pip install twine==3.8.0
+	twine upload --username __token__ --password ${PYPI_TOKEN} dist/* 
