@@ -38,8 +38,8 @@ build:
 	python setup.py sdist bdist_wheel
 
 bump:
-	semantic-release changelog > CHANGELOG.md
 	semantic-release version
+	semantic-release changelog > CHANGELOG.md
 
 release:
 	pip install twine==3.8.0

@@ -28,6 +28,9 @@ jobs:
       - name: Run tests with pytest
         run: |
           make test
-      - name: Build and publish the package
+      - name: Build the package
+        run: |
+          make build
+      - name: Publish the package
         run: |
           make release
