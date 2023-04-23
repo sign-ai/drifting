@@ -31,7 +31,7 @@ setup(
     url="https://github.com/sign-ai/drifting/",
     author="SignAI",
     author_email="smolendawid@gmail.com",
-    description="Drift detection server in Python",
+    description="Drift detection server and client in Python",
     packages=find_packages(exclude=["tests", "tests.*"]),
     install_requires=["mlserver", "alibi-detect", "requests"],
     entry_points={"console_scripts": ["drifting=drifting.cli:main"]},

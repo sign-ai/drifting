@@ -42,5 +42,5 @@ bump:
 	semantic-release version
 
 release:
-	pip install twine
+	pip install twine==3.8.0
 	TWINE_PASSWORD=${PYPI_TOKEN} TWINE_USERNAME=${PYPI_USERNAME} twine upload dist/* 
