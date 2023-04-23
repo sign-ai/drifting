@@ -1,11 +1,11 @@
 name: Publish package to pypi
 on:
-  push:
-    branches:
-      - 'release/**'
+  pull_request:
+    types: [closed]
 
 jobs:
-  test:
+  publish:
+    if: startsWith(github.head_ref, 'release') && github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -28,6 +28,9 @@ jobs:
       - name: Run tests with pytest
         run: |
           make test
-      - name: Build and publish the package
+      - name: Build the package
+        run: |
+          make build
+      - name: Publish the package
         run: |
           make release
