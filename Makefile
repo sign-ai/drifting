@@ -39,14 +39,8 @@ build:
 	python setup.py sdist bdist_wheel
 
 bump:
-	if python -c "import package_name" &> /dev/null; then
-		echo 'Generating changelog with commitizen and bumping the package version'
-	else
-		echo 'Install commitizen first with pip install commitizen==3.0.1'
-	fi
-	
 	cz changelog
-	semantic-release version
+	cz bump
 
 release:
 	pip install twine==3.8.0
