@@ -12,6 +12,7 @@ on:
     paths:
       - drifting/**
       - tests/**
+      - .github/**
 
 jobs:
   test:
