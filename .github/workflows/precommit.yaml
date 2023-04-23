@@ -12,6 +12,7 @@ on:
     paths:
       - drifting/**
       - tests/**
+      - .github/**
 
 jobs:
   test:
@@ -54,6 +55,6 @@ jobs:
       - name: Run tests with pytest
         run: |
           make test
-      # - name: Build the package
-      #   run: |
-      #     make build
+      - name: Build the package
+        run: |
+          make build

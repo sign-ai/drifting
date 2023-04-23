@@ -35,11 +35,12 @@ format:
 	${CMD} -m black ${PACKAGE_DIR} ${TEST_DIR}
 
 build:
+	pip install wheel
 	python setup.py sdist bdist_wheel
 
 bump:
-	semantic-release version
 	semantic-release changelog > CHANGELOG.md
+	semantic-release version
 
 release:
 	pip install twine==3.8.0
