@@ -1,8 +1,8 @@
-name: Drifting Code Checks
+name: Publish package to pypi
 on:
   push:
     branches:
-      - release*
+      - 'release/**'
 
 jobs:
   test:
