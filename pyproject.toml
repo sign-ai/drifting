@@ -4,6 +4,15 @@ version = "0.0.0"
 description = ""
 authors = ["Dawid Smoleń"]
 
+[tool.commitizen]
+name = "cz_conventional_commits"
+version = "0.2.0"
+tag_format = "v$version"
+version_files = [
+    "drifting/version.py",
+    "pyproject.toml:version"
+]
+
 [tool.poetry.group.dev]
 optional = true
 
@@ -33,7 +42,6 @@ pycodestyle = "^2.9.1"
 pep8 = "^1.7.1"
 autopep8 = "^1.6.0"
 pydocstyle = "^6.1.1"
-python-semantic-release = "^7.31.2"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
