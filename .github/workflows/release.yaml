@@ -2,7 +2,7 @@ name: Drifting Code Checks
 on:
   push:
     branches:
-      - release
+      - release*
 
 jobs:
   test:
