@@ -32,5 +32,7 @@ jobs:
         run: |
           make build
       - name: Publish the package
+        env:
+          PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
         run: |
           make release
