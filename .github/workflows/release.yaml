@@ -1,11 +1,11 @@
 name: Publish package to pypi
 on:
-  push:
-    branches:
-      - 'release/**'
+  pull_request:
+    types: [closed]
 
 jobs:
-  test:
+  publish:
+    if: startsWith(github.head_ref, 'release') && github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     strategy:
       matrix:
