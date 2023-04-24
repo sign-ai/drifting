@@ -12,37 +12,3 @@ version_files = [
     "drifting/version.py",
     "pyproject.toml:version"
 ]
-
-[tool.poetry.group.dev]
-optional = true
-
-[tool.poetry.group.test]
-optional = true
-
-[tool.poetry.group.docs]
-optional = true
-
-[tool.poetry.group.docs.dependencies]
-
-[tool.poetry.dependencies]
-python = ">3.8"
-river = "^0.15.0"
-mlserver = "^1.2.3"
-
-[tool.poetry.group.test.dependencies]
-pytest = "^7.1.2"
-pytest-asyncio = "^0.20.3"
-
-[tool.poetry.group.dev.dependencies]
-black = "^22.6.0"
-mypy = "^0.971"
-pylint = "^2.14.5"
-bandit = "^1.7.4"
-pycodestyle = "^2.9.1"
-pep8 = "^1.7.1"
-autopep8 = "^1.6.0"
-pydocstyle = "^6.1.1"
-
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
