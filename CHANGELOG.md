@@ -1,3 +1,10 @@
+## Unreleased
+
+### Fix
+
+- using github secrets in actions
+- cz changelog
+
 ## v0.2.0 (2023-04-23)
 
 ### Fix
