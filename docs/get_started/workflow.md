@@ -17,7 +17,14 @@ The `project_id` should be saved next to the Model artifact or any other place
 so that it can be referenced correctly during inference.
 
 ```python
-todo code example
+from drifting import DriftingClient, DriftType
+from sklearn import datasets
+
+iris = datasets.load_iris()
+client = DriftingClient()
+
+client.fit(white, drift_type=DriftType.TABULAR, detector_name="IrisDriftDetector")
+
 ```
 
 ## Use the model (inference)
@@ -33,7 +40,10 @@ impact the speed of prediction of a model. It can be also done 'after request'
 depending on the functionality you model server provides.
 
 ```python
-todo code example
+for row in iris.data:
+    prediction = clf.predict(row)
+    is_drift, test_stat = client.predict(row, drift_type=DriftType.TABULAR, detector_name="IrisDriftDetector")
+
 ```
 
 ## Re-train the model

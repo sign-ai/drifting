@@ -11,37 +11,39 @@ pip install drifting
 Running the server is easy:
 
 ```
-drifting serve
+drifting start *models_directory/*
 ```
 
 After that, you should see the following output:
 
 ```
-Starting the server
-
-Server listening on localhost:5005
+Uvicorn running on http://0.0.0.0:8082 (Press CTRL+C to quit)
 ```
 
-Also there should be `.drifting/` directory created, that will be used to
-store Projects metadata.
+Also there should be `models_directory/` directory created, that will be used to
+store models and metadata.
 
 ## Preparing Drift Detector
 
 ```python
-import drifting
+from drifting import DriftingClient, DriftType
 from sklearn import datasets
 from sklearn.svm import SVC
 
 iris = datasets.load_iris()
-clf = SVC()
 
-# Train model and drift detector
+# Train classifier
+clf = SVC()
 clf.fit(iris.data, iris.target)
-drifting.fit(data=iris.data, project="my_iris_model")
+
+# Fit drift detector
+client = DriftingClient()
+
+client.fit(white, drift_type=DriftType.TABULAR, detector_name="IrisDriftDetector")
 ```
 
-This example trained the model to predict Iris labels. Also, we fitted
-Drift Detector called `my_iris_model`.
+This example trained the model to predict Iris labels. After, we fitted
+Drift Detector called `IrisDriftDetector`.
 
 ## Drift Detection
 
@@ -50,17 +52,17 @@ occurs.
 
 ```python
 # Gradually receive data to predict and detect drift
-for example in iris.data:
-    prediction = clf.predict(example)
-    response = drifting.detect(data=example, project="my_iris_model")
+for row in iris.data:
+    prediction = clf.predict(row)
+    is_drift, test_stat = client.predict(row, drift_type=DriftType.TABULAR, detector_name="IrisDriftDetector")
 
-print(response)
+print(is_drift)
 ```
 
 The response shows current status
 
 ```python
-DriftResponse(is_drift=False, drift_value=0.03, window=100)
+is_drift: False
 ```
 
 ## Customized Drift Detector
@@ -74,5 +76,3 @@ occur and should be detected when it impacts model quality. Considering various
 domains - images, speech, tabular data, different tasks - classification,
 regression, usage frequency, the universal recipe for Drift Detector doesn't
 exist.
-
-The algorithms can be chosen among all the algorithms

@@ -32,39 +32,45 @@ both for fitting the Drift Detector and detecting the drift. In your training
 pipeline, use the `fit` method:
 
 ```python
-import drifting
-drifting.fit(train_column, project="example")
+from drifting import DriftingClient, DriftType
+from sklearn import datasets
+
+iris = datasets.load_iris()
+client = DriftingClient()
+
+client.fit(white, drift_type=DriftType.TABULAR, detector_name="IrisDriftDetector")
 
 ```
 
 Then, next to your prediction call:
 
 ```python
-import drifting
-response = drifting.detect(inference_data, project="example")
-response.is_drift
+for row in iris.data:
+    prediction = clf.predict(row)
+    is_drift, test_stat = client.predict(row, drift_type=DriftType.TABULAR, detector_name="IrisDriftDetector")
+
 ```
 
 Note that this makes the usage of the server **as easy as possible**.
 
+1. You only make a request to the server once per prediction, alongside with prediction.
 1. It's not required to manage any artifacts,
 1. No need to implement any feedback loops,
 1. No need to collect test data,
 1. No need to leave your python environment, fetch any logs,
-1. You only make request to the server twice.
 
 ## Local installation and running
 
-To install dependencies, use poetry:
+To install dependencies:
 
 ```
-poetry install
+pip install -r requirements.txt
 ```
 
-And run server locally:
+And run server locally (uses 'drift_detectors/' path for artifacts):
 
 ```
-python drifting/app.py
+drifting start drift_detectors/
 ```
 
 ## Production usage
@@ -78,17 +84,14 @@ To deploy the on cloud instance using docker, you can easily pull the image
 and run it:
 
 ```python
-TODO
+docker run -it sign-ai/drifting
 ```
 
 ### Kubernetes and Helm
 
 For more demanding use-cases, it's facilitated to deploy Drift Detection Server
-on kubernetes. DDS is packaged with bitnami. You can include the chart by
-
-```python
-TODO
-```
+on kubernetes. DDS is packaged with bitnami. Example Helm charts are not 
+implemented yet.
 
 ## Real-world scenarios
 

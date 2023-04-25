@@ -6,23 +6,31 @@ the specifics when they will not be clarified. Below we describe the most
 important phenomena that can occur in the data.
 
 The `drifting` package greatly facilitates the work with Covariate Shift,
-Prior Drift, and Label Drift. Concept Drift doesn't fit the proposed framework.
+Prior Drift, and Label Drift. Concept Drift doesn't fit the proposed framework,
+as it requires labeled data, which is not available on the inference time.
+
+We recommend watching the excellent [Drift Detection Overview by Seldon](https://www.youtube.com/watch?v=JaPMFf0cKlM).
+
 
 ## Covariate shift
 
-_Also called Data Drift, Covariate Drift_
+_Also called Data Drift, Covariate Drift, Features Drift_
 
-TODO
+Covariate Shift is the difference between the features from training data,
+and inference data. It can be also the difference between the raw data from 
+training time, and inference time.
 
 ## Prior Drift
 
-_Also called_
+_Also called Label Drift_
 
-TODO
+This is the difference between the **predictions** on data training data, and on
+the inference data. Please note it's not using the labels directly, as the 
+original label distribution is often different that the predictions for the same 
+data! In order to make fair comparison using labels directly, it would be 
+necessary to first collect the real labels for the inference data.
 
 ## Concept Drift
-
-_Also called_
 
 Concept Drift doesn't fit the proposed framework. Concept Drift is defined as
 the shift in the relationship between the independent and the target variable.
@@ -60,4 +68,11 @@ The architecture below is the example of Concept Drift detection outside
 inference server. It requires implementing a feedback loop, and scheduled job to
 run the detection process.
 
-TODO
+``` mermaid
+graph TD
+  A[Data] --> B[Model];
+  B --> C[Predictions];
+  C --> D[Database]
+  A --> E[Drift Detection Job]
+  D --> E[Drift Detection Job]
+```

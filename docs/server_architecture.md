@@ -8,7 +8,7 @@ is `Metrics Database`.
 
 ## Server
 
-Server is a Python FastAPI server.
+Server is a Python server built on the top of [mlserver](https://mlserver.readthedocs.io/).
 
 ## Artifacts Storage
 
