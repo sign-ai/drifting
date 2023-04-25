@@ -28,14 +28,9 @@ package for the statistical calculations.
 
 **Project** consists of 3 elements:
 
-1. **ID** - unique name that allows to distinguish the model and drift detector
+1. **detector_name** - unique name that allows to distinguish the model and drift detector
    from others
-1. **Drift Detector** - algorithm that detects drift and its parameters (in the
-   statistical sense)
+1. **drift_type** - the type of a drift (image, text, tabular)
 1. **Configuration** - configuration that allows the Drift Detector to be loaded.
 
-Drift detector for a **Project** should be trained once and is immutable.
-
-The following diagram should explain the dependencies between the objects easily:
-
-TODO
+Drift detector for a **detector_name** should be trained once and is immutable.
