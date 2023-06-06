@@ -23,7 +23,7 @@ class DetectorCore(abc.ABC):
         """Save the `detector` to `uri`."""
 
     @abc.abstractmethod
-    def fit(self, data):
+    def fit(self, data, ert, window_size, n_bootstraps):
         """Fit the detector."""
 
     @abc.abstractmethod

@@ -6,6 +6,7 @@ import pandas as pd
 import requests
 from mlserver import types
 from mlserver.codecs import NumpyRequestCodec, PandasCodec
+from mlserver.codecs.string import StringRequestCodec
 
 from drifting.drift_detection_server.server import DriftType, Params
 
@@ -31,9 +32,13 @@ def encode_fitting_data(data, drift_type: DriftType) -> types.InferenceRequest:
     elif drift_type == DriftType.DUMMY:
         payload = NumpyRequestCodec.encode_request(data)
 
+    elif drift_type == DriftType.TEXT:
+        payload = StringRequestCodec.encode_request(data, use_bytes=False)
+
     else:
         raise NotImplementedError(
-            "Only DriftType.TABULAR, DriftType.LABEL, DriftType.DUMMY implemented so far."
+            "Only DriftType.TABULAR, DriftType.LABEL, DriftType.DUMMY,"
+            "DriftType.TEXT, implemented so far."
         )
 
     return payload
@@ -68,17 +73,33 @@ def encode_infer_data(data, drift_type: DriftType) -> types.InferenceRequest:
     elif drift_type == DriftType.DUMMY:
         payload = NumpyRequestCodec.encode_request(data)
 
+    elif drift_type == DriftType.TEXT:
+        payload = StringRequestCodec.encode_request(data, use_bytes=False)
+
     else:
         raise NotImplementedError(
-            "Only DriftType.TABULAR, DriftType.LABEL, DriftType.DUMMY implemented so far."
+            "Only DriftType.TABULAR, DriftType.LABEL, DriftType.DUMMY"
+            "DriftType.TEXT, implemented so far."
         )
 
     return payload
 
 
-def get_params_dict(drift_type: DriftType, detector_name: str) -> str:
+def get_params_dict(
+    drift_type: DriftType,
+    detector_name: str,
+    ert: int = 400,
+    window_size: int = 40,
+    n_bootstraps: int = 7000,
+) -> str:
     """Return parameters as dictionary."""
-    return Params(drift_type=drift_type, detector_name=detector_name).dict()
+    return Params(
+        drift_type=drift_type,
+        detector_name=detector_name,
+        ert=ert,
+        window_size=window_size,
+        n_bootstraps=n_bootstraps,
+    ).dict()
 
 
 class DriftingClient:
@@ -103,9 +124,18 @@ class DriftingClient:
         train_data,
         drift_type: DriftType,
         detector_name: str,
+        ert: int = 400,
+        window_size: int = 40,
+        n_bootstraps: int = 7000,
     ) -> requests.Response:
         """Call fit method."""
-        params = get_params_dict(detector_name=detector_name, drift_type=drift_type)
+        params = get_params_dict(
+            detector_name=detector_name,
+            drift_type=drift_type,
+            ert=ert,
+            window_size=window_size,
+            n_bootstraps=n_bootstraps,
+        )
         endpoint = f"{self.host}/{DATA_PLANE_VERSION}/models/fit/"
         payload = encode_fitting_data(train_data, drift_type)
         response = requests.post(

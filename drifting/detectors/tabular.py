@@ -14,7 +14,12 @@ from drifting.detectors.detector_core import DetectorCore
 class TabularDriftDetector(AlibiDetector):
     # pylint: disable=missing-class-docstring
     def decode_drift_request(self, inference_request: types.InferenceRequest):
-        return super().decode_request(inference_request, default_codec=PandasCodec)
+        return np.array(
+            super().decode_request(inference_request, default_codec=PandasCodec)
+        ).flatten()
+
+    def forward(self, data):
+        return self._model.predict(data)
 
 
 class TabularDriftDetectorCore(DetectorCore):
@@ -34,15 +39,12 @@ class TabularDriftDetectorCore(DetectorCore):
         """See base class."""
         save_detector(detector, uri)
 
-    def fit(self, data):
+    def fit(self, data, ert: int, window_size: int, n_bootstraps: int):
         """Fit"""
         np.random.seed(0)
 
         pca = PCA(2)
         pca.fit(data)
-
-        ert = 200
-        window_size = 80
 
         detector = MMDDriftOnline(
             data,
@@ -50,7 +52,7 @@ class TabularDriftDetectorCore(DetectorCore):
             window_size,
             backend="pytorch",
             preprocess_fn=pca.transform,
-            n_bootstraps=2500,
+            n_bootstraps=n_bootstraps,
         )
         return detector
 
