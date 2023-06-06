@@ -72,21 +72,18 @@ class TextDriftDetectorCore(DetectorCore):
         """See base class."""
         save_detector(detector, uri)
 
-    def fit(self, data):
+    def fit(self, data, ert: int, window_size: int, n_bootstraps: int):
         """Fit"""
         x_emb = process_text(
             tokenizer=self.tokenizer, embedding=self.embedding, data=data
         )
-
-        ert = 400
-        window_size = 40
 
         detector = MMDDriftOnline(
             x_emb.detach().numpy(),
             ert,
             window_size,
             backend="pytorch",
-            n_bootstraps=7000,
+            n_bootstraps=n_bootstraps,
         )
         return detector
 

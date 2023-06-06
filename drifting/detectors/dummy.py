@@ -44,7 +44,7 @@ class DummyDriftDetectorCore(DetectorCore):
     def save(self, detector, uri):
         """See base class."""
 
-    def fit(self, data):
+    def fit(self, data, ert: int, window_size: int, n_bootstraps: int):
         """Fit dummy detector."""
         return None
 

@@ -42,12 +42,18 @@ class Params:
 
     drift_type: DriftType
     detector_name: str
+    ert: int
+    window_size: int
+    n_bootstraps: int
 
     def dict(self):
         """Represent params as string."""
         return {
             "detector_name": self.detector_name,
             "drift_type": self.drift_type.value,
+            "ert": self.ert,
+            "window_size": self.window_size,
+            "n_bootstraps": self.n_bootstraps,
         }
 
 
@@ -114,6 +120,9 @@ class DriftDetectionServer(MLModel):
         payload: InferenceRequest,
         drift_type: str,
         detector_name: str,
+        ert: int = 400,
+        window_size: int = 40,
+        n_bootstraps: int = 7000,
     ) -> JSONResponse:
         """Fit the detector.
 
@@ -132,7 +141,9 @@ class DriftDetectionServer(MLModel):
         trainer = self._provide_trainer(drift_type)
 
         data = trainer.decode_training_data(payload)
-        detector = trainer.fit(data)
+        detector = trainer.fit(
+            data, ert=ert, window_size=window_size, n_bootstraps=n_bootstraps
+        )
 
         persist(
             destination_uri=self.settings.parameters.uri,

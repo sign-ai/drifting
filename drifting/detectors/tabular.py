@@ -39,15 +39,12 @@ class TabularDriftDetectorCore(DetectorCore):
         """See base class."""
         save_detector(detector, uri)
 
-    def fit(self, data):
+    def fit(self, data, ert: int, window_size: int, n_bootstraps: int):
         """Fit"""
         np.random.seed(0)
 
         pca = PCA(2)
         pca.fit(data)
-
-        ert = 200
-        window_size = 80
 
         detector = MMDDriftOnline(
             data,
@@ -55,7 +52,7 @@ class TabularDriftDetectorCore(DetectorCore):
             window_size,
             backend="pytorch",
             preprocess_fn=pca.transform,
-            n_bootstraps=2500,
+            n_bootstraps=n_bootstraps,
         )
         return detector
 

@@ -40,11 +40,9 @@ class LabelDriftDetectorCore(DetectorCore):
         """See base class."""
         save_detector(detector, uri)
 
-    def fit(self, data):
+    def fit(self, data, ert: int, window_size: int, n_bootstraps: int):
         """Fit CVMDriftOnline detector."""
-        ert = 300
-        window_sizes = [80, 120]
-        detector = CVMDriftOnline(data.flatten(), ert, window_sizes)
+        detector = CVMDriftOnline(data.flatten(), ert, [40, 80])
 
         return detector
 
