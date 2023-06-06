@@ -37,7 +37,8 @@ def encode_fitting_data(data, drift_type: DriftType) -> types.InferenceRequest:
 
     else:
         raise NotImplementedError(
-            "Only DriftType.TABULAR, DriftType.LABEL, DriftType.DUMMY, DriftType.TEXT, implemented so far."
+            "Only DriftType.TABULAR, DriftType.LABEL, DriftType.DUMMY,"
+            "DriftType.TEXT, implemented so far."
         )
 
     return payload
@@ -77,7 +78,8 @@ def encode_infer_data(data, drift_type: DriftType) -> types.InferenceRequest:
 
     else:
         raise NotImplementedError(
-            "Only DriftType.TABULAR, DriftType.LABEL, DriftType.DUMMY DriftType.TEXT, implemented so far."
+            "Only DriftType.TABULAR, DriftType.LABEL, DriftType.DUMMY"
+            "DriftType.TEXT, implemented so far."
         )
 
     return payload

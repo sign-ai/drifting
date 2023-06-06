@@ -1,40 +1,29 @@
 """Tabular drift detector."""
 
-import numpy as np
 from alibi_detect.cd import MMDDriftOnline
+from alibi_detect.models.pytorch import TransformerEmbedding
 from alibi_detect.utils.saving import save_detector
 from mlserver import types
 from mlserver.codecs.string import StringRequestCodec
-from mlserver.codecs import NumpyCodec
-from mlserver.errors import InferenceError
+from mlserver.settings import ModelSettings
+
+# pylint: disable=no-name-in-module
+from transformers import AutoTokenizer
 
 from drifting.detectors.alibi_detector import AlibiDetector
 from drifting.detectors.detector_core import DetectorCore
-from mlserver.settings import ModelSettings
-
-import numpy as np
-from alibi_detect.utils.saving import load_detector
-from mlserver import MLModel, types
-from mlserver.errors import InferenceError, MLServerError
-from mlserver.codecs import NumpyCodec
-
-# pylint: disable=no-name-in-module
-from pydantic.error_wrappers import ValidationError
-from alibi_detect.models.pytorch import TransformerEmbedding
-
-from transformers import AutoTokenizer
 
 
-def prepare_embedding():
+def prepare_embedding(model_name="bert-base-cased", n_layers=6) -> TransformerEmbedding:
+    """Prepare embedding encoder."""
     emb_type = "hidden_state"
-    n_layers = 6
     layers = [-_ for _ in range(1, n_layers + 1)]
     model_name = "bert-base-cased"
     return TransformerEmbedding(model_name, emb_type, layers)
 
 
-def process_text(tokenizer, embedding, data):
-    max_len = 60
+def process_text(tokenizer, embedding, data, max_len=60):
+    """Process text so that it's ready to be passed to the model."""
     tokens = tokenizer(
         data, pad_to_max_length=True, max_length=max_len, return_tensors="pt"
     )
@@ -43,6 +32,8 @@ def process_text(tokenizer, embedding, data):
 
 
 class TextDriftDetector(AlibiDetector):
+    """See base class."""
+
     def __init__(self, settings: ModelSettings):
         super().__init__(settings)
 
@@ -60,23 +51,6 @@ class TextDriftDetector(AlibiDetector):
             tokenizer=self.tokenizer, embedding=self.embedding, data=data
         )
         return self._model.predict(x_emb.squeeze().detach().numpy())
-
-    async def load(self) -> bool:
-        # pylint: disable=attribute-defined-outside-init
-        try:
-            self._model = load_detector(self.settings.parameters.uri)
-        except (
-            ValueError,
-            FileNotFoundError,
-            EOFError,
-            NotImplementedError,
-            ValidationError,
-        ) as err:
-            raise MLServerError(
-                f"Invalid configuration for model {self._settings.name}: {err}"
-            ) from err
-        self.ready = True
-        return self.ready
 
 
 class TextDriftDetectorCore(DetectorCore):
