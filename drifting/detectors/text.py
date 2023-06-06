@@ -56,7 +56,9 @@ class TextDriftDetector(AlibiDetector):
         )
 
     def forward(self, data):
-        x_emb = process_text(tokenizer=self.tokenizer, embedding=self.embedding, data=data)
+        x_emb = process_text(
+            tokenizer=self.tokenizer, embedding=self.embedding, data=data
+        )
         return self._model.predict(x_emb.squeeze().detach().numpy())
 
     async def load(self) -> bool:
@@ -86,7 +88,7 @@ class TextDriftDetectorCore(DetectorCore):
         self._implementation_path = "text.TextDriftDetector"
         self.tokenizer = AutoTokenizer.from_pretrained("bert-base-cased")
         self.embedding = prepare_embedding()
-        
+
     @property
     def implementation_path(self) -> str:
         """See base class."""
@@ -98,7 +100,9 @@ class TextDriftDetectorCore(DetectorCore):
 
     def fit(self, data):
         """Fit"""
-        x_emb = process_text(tokenizer=self.tokenizer, embedding=self.embedding, data=data)
+        x_emb = process_text(
+            tokenizer=self.tokenizer, embedding=self.embedding, data=data
+        )
 
         ert = 400
         window_size = 40
