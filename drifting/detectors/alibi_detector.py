@@ -36,7 +36,7 @@ class AlibiDetector(MLModel):
     async def predict(self, payload: types.InferenceRequest) -> types.InferenceResponse:
         input_data = self.decode_drift_request(payload)
         try:
-            output = self._model.predict(np.array(input_data).flatten())
+            output = self.forward(input_data)
         except (ValueError, IndexError) as err:
             raise InferenceError(
                 f"Invalid predict parameters for model {self._settings.name}: {err}"
@@ -57,4 +57,8 @@ class AlibiDetector(MLModel):
 
     def decode_drift_request(self, inference_request: types.InferenceRequest):
         """Decode the request according to drift codec."""
+        raise NotImplementedError
+
+    def forward(self, data):
+        """Forward pass of data."""
         raise NotImplementedError

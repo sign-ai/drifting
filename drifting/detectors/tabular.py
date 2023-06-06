@@ -14,7 +14,12 @@ from drifting.detectors.detector_core import DetectorCore
 class TabularDriftDetector(AlibiDetector):
     # pylint: disable=missing-class-docstring
     def decode_drift_request(self, inference_request: types.InferenceRequest):
-        return super().decode_request(inference_request, default_codec=PandasCodec)
+        return np.array(
+            super().decode_request(inference_request, default_codec=PandasCodec)
+        ).flatten()
+
+    def forward(self, data):
+        return self._model.predict(data)
 
 
 class TabularDriftDetectorCore(DetectorCore):

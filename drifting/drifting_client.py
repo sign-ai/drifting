@@ -6,6 +6,7 @@ import pandas as pd
 import requests
 from mlserver import types
 from mlserver.codecs import NumpyRequestCodec, PandasCodec
+from mlserver.codecs.string import StringRequestCodec
 
 from drifting.drift_detection_server.server import DriftType, Params
 
@@ -31,9 +32,12 @@ def encode_fitting_data(data, drift_type: DriftType) -> types.InferenceRequest:
     elif drift_type == DriftType.DUMMY:
         payload = NumpyRequestCodec.encode_request(data)
 
+    elif drift_type == DriftType.TEXT:
+        payload = StringRequestCodec.encode_request(data, use_bytes=False)
+
     else:
         raise NotImplementedError(
-            "Only DriftType.TABULAR, DriftType.LABEL, DriftType.DUMMY implemented so far."
+            "Only DriftType.TABULAR, DriftType.LABEL, DriftType.DUMMY, DriftType.TEXT, implemented so far."
         )
 
     return payload
@@ -68,9 +72,12 @@ def encode_infer_data(data, drift_type: DriftType) -> types.InferenceRequest:
     elif drift_type == DriftType.DUMMY:
         payload = NumpyRequestCodec.encode_request(data)
 
+    elif drift_type == DriftType.TEXT:
+        payload = StringRequestCodec.encode_request(data, use_bytes=False)
+
     else:
         raise NotImplementedError(
-            "Only DriftType.TABULAR, DriftType.LABEL, DriftType.DUMMY implemented so far."
+            "Only DriftType.TABULAR, DriftType.LABEL, DriftType.DUMMY DriftType.TEXT, implemented so far."
         )
 
     return payload

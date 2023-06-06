@@ -31,6 +31,7 @@ class DriftType(Enum):
     LABEL = "label"
     TABULAR = "tabular"
     SEQUENTIAL = "sequential"
+    TEXT = "text"
     IMAGE = "image"
     DUMMY = "dummy"
 
@@ -82,6 +83,10 @@ class DriftDetectionServer(MLModel):
             raise NotImplementedError(f"drift_type {drift_type} is not implemented yet")
         elif drift_type == DriftType.IMAGE.value:
             raise NotImplementedError(f"drift_type {drift_type} is not implemented yet")
+        elif drift_type == DriftType.TEXT.value:
+            from drifting.detectors.text import TextDriftDetectorCore
+
+            trainer = TextDriftDetectorCore()  # type: ignore
         elif drift_type == DriftType.TABULAR.value:
             from drifting.detectors.tabular import TabularDriftDetectorCore
 

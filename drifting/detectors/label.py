@@ -2,7 +2,7 @@
 
 Label drift detection works both for classification and regression labels.
 """
-
+import numpy as np
 from alibi_detect.cd import CVMDriftOnline
 from alibi_detect.utils.saving import save_detector
 from mlserver import types
@@ -15,9 +15,12 @@ from drifting.detectors.detector_core import DetectorCore
 class LabelDriftDetector(AlibiDetector):
     # pylint: disable=missing-class-docstring
     def decode_drift_request(self, inference_request: types.InferenceRequest):
-        return super().decode_request(
-            inference_request, default_codec=NumpyRequestCodec
-        )
+        return np.array(
+            super().decode_request(inference_request, default_codec=NumpyRequestCodec)
+        ).flatten()
+
+    def forward(self, data):
+        return self._model.predict(data)
 
 
 class LabelDriftDetectorCore(DetectorCore):
